@@ -1,0 +1,119 @@
+2026-11-07 00:42:52,680 SCENARIO n1 start
+2026-11-07 00:42:52,688 NOTE Normal day. Expected: no incident, no actuator command.
+2026-11-07 00:42:53,095 IGNORED us-a-light-01: unknown attribute 'latitude' on the entity; this device accepts phase, cycleTime, mode
+2026-11-07 00:42:53,096 IGNORED us-a-light-03: unknown attribute 'latitude' on the entity; this device accepts phase, cycleTime, mode
+2026-11-07 00:42:53,096 IGNORED us-b-alarm-01: unknown attribute 'latitude' on the entity; this device accepts alarmState
+2026-11-07 00:42:53,097 PUBLISH us-a-traf-02 {"vehicleCount": 21, "avgSpeed": 47.9, "occupancy": 14.3, "congestionLevel": 14, "timestamp": "2026-11-06T23:42:52+00:00"}
+2026-11-07 00:42:53,099 PUBLISH us-a-traf-03 {"vehicleCount": 18, "avgSpeed": 51.3, "occupancy": 13.4, "congestionLevel": 13, "timestamp": "2026-11-06T23:42:52+00:00"}
+2026-11-07 00:42:53,102 PUBLISH us-a-traf-01 {"vehicleCount": 21, "avgSpeed": 52.4, "occupancy": 14.9, "congestionLevel": 14, "timestamp": "2026-11-06T23:42:52+00:00"}
+2026-11-07 00:42:53,104 PUBLISH us-b-bldg-01 {"smokeLevel": 2.9, "temperature": 22.2, "occupancyCount": 15, "timestamp": "2026-11-06T23:42:52+00:00"}
+2026-11-07 00:42:53,104 IGNORED us-a-light-01: unknown attribute 'longitude' on the entity; this device accepts phase, cycleTime, mode
+2026-11-07 00:42:53,105 IGNORED us-a-sign-01: unknown attribute 'incidentId' on the entity; this device accepts message, roadClosed
+2026-11-07 00:42:53,108 IGNORED us-a-light-03: unknown attribute 'longitude' on the entity; this device accepts phase, cycleTime, mode
+2026-11-07 00:42:53,108 IGNORED us-b-alarm-01: unknown attribute 'longitude' on the entity; this device accepts alarmState
+2026-11-07 00:42:53,126 IGNORED us-a-light-01: unknown attribute 'model' on the entity; this device accepts phase, cycleTime, mode
+2026-11-07 00:42:53,129 IGNORED us-a-sign-01: unknown attribute 'latitude' on the entity; this device accepts message, roadClosed
+2026-11-07 00:42:53,138 IGNORED us-a-light-03: unknown attribute 'model' on the entity; this device accepts phase, cycleTime, mode
+2026-11-07 00:42:53,142 IGNORED us-b-alarm-01: unknown attribute 'model' on the entity; this device accepts alarmState
+2026-11-07 00:42:53,162 IGNORED us-a-sign-01: unknown attribute 'longitude' on the entity; this device accepts message, roadClosed
+2026-11-07 00:42:53,176 IGNORED us-a-sign-01: unknown attribute 'model' on the entity; this device accepts message, roadClosed
+2026-11-07 00:42:53,217 IGNORED us-a-sign-01: unknown attribute 'status' on the entity; this device accepts message, roadClosed
+2026-11-07 00:42:53,221 IGNORED us-a-sign-01: unknown attribute 'unitsDispatched' on the entity; this device accepts message, roadClosed
+2026-11-07 00:42:53,266 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:42:53+00:00"}
+2026-11-07 00:42:53,280 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:42:53+00:00"}
+2026-11-07 00:42:53,287 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T23:42:53+00:00"}
+2026-11-07 00:42:53,501 IGNORED us-c-task-01: unknown attribute 'latitude' on the entity; this device accepts taskStatus, location
+2026-11-07 00:42:53,504 IGNORED us-c-task-01: unknown attribute 'longitude' on the entity; this device accepts taskStatus, location
+2026-11-07 00:42:53,506 IGNORED us-c-task-01: unknown attribute 'model' on the entity; this device accepts taskStatus, location
+2026-11-07 00:42:54,439 PUBLISH us-c-bin-02 {"fillLevel": 5, "timestamp": "2026-11-06T23:42:53+00:00"}
+2026-11-07 00:42:54,441 PUBLISH us-c-bin-01 {"fillLevel": 5, "timestamp": "2026-11-06T23:42:53+00:00"}
+2026-11-07 00:42:54,443 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T23:42:53+00:00"}
+2026-11-07 00:42:54,445 IGNORED us-b-disp-01: unknown attribute 'latitude' on the entity; this device accepts status, unitsDispatched, incidentId
+2026-11-07 00:42:54,463 IGNORED us-b-disp-01: unknown attribute 'longitude' on the entity; this device accepts status, unitsDispatched, incidentId
+2026-11-07 00:42:54,463 IGNORED us-b-disp-01: unknown attribute 'model' on the entity; this device accepts status, unitsDispatched, incidentId
+2026-11-07 00:42:54,576 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T23:42:54+00:00"}
+2026-11-07 00:42:56,560 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T23:42:53+00:00"}
+2026-11-07 00:42:56,713 SEND_FAIL us-ops-center: HTTP 422 {"error":"Unprocessable","description":"one or more of the attributes in the request do not exist: [ lightPhase, lightMode, signMessage, alarmState, d
+2026-11-07 00:42:56,833 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T23:42:53+00:00"}
+2026-11-07 00:42:57,999 PUBLISH us-a-traf-02 {"vehicleCount": 17, "avgSpeed": 52.2, "occupancy": 15.2, "congestionLevel": 15, "timestamp": "2026-11-06T23:42:57+00:00"}
+2026-11-07 00:42:58,006 PUBLISH us-b-bldg-01 {"smokeLevel": 1.9, "temperature": 22.1, "occupancyCount": 15, "timestamp": "2026-11-06T23:42:57+00:00"}
+2026-11-07 00:42:58,014 PUBLISH us-a-traf-01 {"vehicleCount": 18, "avgSpeed": 48.3, "occupancy": 14.4, "congestionLevel": 14, "timestamp": "2026-11-06T23:42:57+00:00"}
+2026-11-07 00:42:58,016 PUBLISH us-a-traf-03 {"vehicleCount": 18, "avgSpeed": 50.1, "occupancy": 16.8, "congestionLevel": 16, "timestamp": "2026-11-06T23:42:57+00:00"}
+2026-11-07 00:42:58,139 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:42:58,141 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:42:58,144 PUBLISH us-c-bin-01 {"fillLevel": 5, "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:42:58,145 PUBLISH us-c-bin-02 {"fillLevel": 5, "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:42:58,149 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:42:58,151 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:42:58,197 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:42:58,211 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:42:58,273 SEND_FAIL us-ops-center: HTTP 422 {"error":"Unprocessable","description":"one or more of the attributes in the request do not exist: [ lightPhase, lightMode, signMessage, alarmState, d
+2026-11-07 00:42:58,367 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T23:42:58+00:00"}
+2026-11-07 00:43:02,913 PUBLISH us-a-traf-02 {"vehicleCount": 17, "avgSpeed": 52.8, "occupancy": 16.9, "congestionLevel": 16, "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:02,920 PUBLISH us-a-traf-03 {"vehicleCount": 22, "avgSpeed": 49.8, "occupancy": 13.3, "congestionLevel": 13, "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:02,930 PUBLISH us-a-traf-01 {"vehicleCount": 21, "avgSpeed": 47.8, "occupancy": 16.6, "congestionLevel": 16, "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:02,934 PUBLISH us-b-bldg-01 {"smokeLevel": 1.5, "temperature": 22.2, "occupancyCount": 15, "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:03,018 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:03,020 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:03,029 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:03,036 PUBLISH us-c-bin-01 {"fillLevel": 5, "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:03,043 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:03,052 PUBLISH us-c-bin-02 {"fillLevel": 5, "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:03,070 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T23:43:02+00:00"}
+2026-11-07 00:43:03,111 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T23:43:03+00:00"}
+2026-11-07 00:43:03,141 SEND_FAIL us-ops-center: HTTP 422 {"error":"Unprocessable","description":"one or more of the attributes in the request do not exist: [ lightPhase, lightMode, signMessage, alarmState, d
+2026-11-07 00:43:03,205 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T23:43:03+00:00"}
+2026-11-07 00:43:07,911 PUBLISH us-a-traf-02 {"vehicleCount": 21, "avgSpeed": 50.1, "occupancy": 14.0, "congestionLevel": 13, "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:07,922 PUBLISH us-a-traf-03 {"vehicleCount": 19, "avgSpeed": 51.6, "occupancy": 16.0, "congestionLevel": 15, "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:07,933 PUBLISH us-a-traf-01 {"vehicleCount": 18, "avgSpeed": 49.3, "occupancy": 13.3, "congestionLevel": 13, "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:07,934 PUBLISH us-b-bldg-01 {"smokeLevel": 1.7, "temperature": 22.1, "occupancyCount": 15, "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:08,004 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:08,017 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:08,024 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:08,026 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:08,030 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:08,034 PUBLISH us-c-bin-02 {"fillLevel": 6, "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:08,037 PUBLISH us-c-bin-01 {"fillLevel": 6, "timestamp": "2026-11-06T23:43:07+00:00"}
+2026-11-07 00:43:08,103 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T23:43:08+00:00"}
+2026-11-07 00:43:08,179 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T23:43:08+00:00"}
+2026-11-07 00:43:12,883 PUBLISH us-a-traf-03 {"vehicleCount": 20, "avgSpeed": 48.2, "occupancy": 14.4, "congestionLevel": 14, "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,886 PUBLISH us-a-traf-02 {"vehicleCount": 17, "avgSpeed": 50.5, "occupancy": 15.5, "congestionLevel": 15, "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,894 PUBLISH us-b-bldg-01 {"smokeLevel": 2.2, "temperature": 21.9, "occupancyCount": 15, "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,898 PUBLISH us-a-traf-01 {"vehicleCount": 20, "avgSpeed": 51.5, "occupancy": 13.9, "congestionLevel": 13, "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,970 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,972 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,981 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,982 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,985 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:12,995 PUBLISH us-c-bin-02 {"fillLevel": 6, "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:13,001 PUBLISH us-c-bin-01 {"fillLevel": 6, "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:13,050 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T23:43:12+00:00"}
+2026-11-07 00:43:13,139 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T23:43:13+00:00"}
+2026-11-07 00:43:17,848 PUBLISH us-a-traf-02 {"vehicleCount": 21, "avgSpeed": 47.0, "occupancy": 14.5, "congestionLevel": 14, "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,851 PUBLISH us-b-bldg-01 {"smokeLevel": 2.9, "temperature": 22.4, "occupancyCount": 15, "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,852 PUBLISH us-a-traf-03 {"vehicleCount": 20, "avgSpeed": 47.1, "occupancy": 14.0, "congestionLevel": 14, "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,856 PUBLISH us-a-traf-01 {"vehicleCount": 17, "avgSpeed": 49.4, "occupancy": 15.8, "congestionLevel": 15, "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,929 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,932 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,942 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,945 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,947 PUBLISH us-c-bin-01 {"fillLevel": 6, "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,947 PUBLISH us-c-bin-02 {"fillLevel": 6, "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:17,955 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:18,025 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T23:43:17+00:00"}
+2026-11-07 00:43:18,107 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T23:43:18+00:00"}
+2026-11-07 00:43:22,803 PUBLISH us-a-traf-02 {"vehicleCount": 18, "avgSpeed": 49.1, "occupancy": 15.6, "congestionLevel": 15, "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,815 PUBLISH us-a-traf-03 {"vehicleCount": 20, "avgSpeed": 51.2, "occupancy": 14.7, "congestionLevel": 14, "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,817 PUBLISH us-b-bldg-01 {"smokeLevel": 1.7, "temperature": 21.9, "occupancyCount": 15, "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,819 PUBLISH us-a-traf-01 {"vehicleCount": 22, "avgSpeed": 50.5, "occupancy": 16.6, "congestionLevel": 16, "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,889 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,889 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,889 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,896 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,899 PUBLISH us-c-bin-02 {"fillLevel": 7, "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,912 PUBLISH us-c-bin-01 {"fillLevel": 7, "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,912 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:22,978 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:23,056 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T23:43:22+00:00"}
+2026-11-07 00:43:25,629 INTERRUPTED
+2026-11-07 00:43:25,629 SCENARIO n1 end

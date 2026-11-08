@@ -1,0 +1,186 @@
+2026-11-06 23:01:26,049 SCENARIO n1 start
+2026-11-06 23:01:26,049 NOTE Calm day. Expected: no alert, no actuator command.
+2026-11-06 23:01:26,056 PUBLISH us-a-traf-03 {"vehicleCount": 19, "avgSpeed": 51.7, "occupancy": 13.8, "congestionLevel": 13, "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,058 PUBLISH us-a-traf-02 {"vehicleCount": 19, "avgSpeed": 47.5, "occupancy": 15.8, "congestionLevel": 15, "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,059 PUBLISH us-a-traf-01 {"vehicleCount": 17, "avgSpeed": 49.2, "occupancy": 14.2, "congestionLevel": 14, "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,064 PUBLISH us-b-bldg-01 {"smokeLevel": 2.2, "temperature": 21.7, "occupancyCount": 15, "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,065 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,068 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,071 PUBLISH us-c-bin-01 {"fillLevel": 5, "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,072 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,072 PUBLISH us-c-bin-02 {"fillLevel": 5, "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,073 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,074 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 14.0, "maxSmokeLevel": 2.2, "maxTemperature": 21.7, "maxFillLevel": 5, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,074 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,075 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:26,076 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:01:26+00:00"}
+2026-11-06 23:01:31,084 PUBLISH us-a-traf-01 {"vehicleCount": 19, "avgSpeed": 51.2, "occupancy": 16.9, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,087 PUBLISH us-b-bldg-01 {"smokeLevel": 1.6, "temperature": 22.4, "occupancyCount": 15, "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,092 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,092 PUBLISH us-a-traf-02 {"vehicleCount": 21, "avgSpeed": 51.6, "occupancy": 16.7, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,093 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,094 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,095 PUBLISH us-c-bin-01 {"fillLevel": 5, "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,095 PUBLISH us-a-traf-03 {"vehicleCount": 22, "avgSpeed": 49.7, "occupancy": 14.6, "congestionLevel": 14, "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,095 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,095 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,095 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,096 PUBLISH us-c-bin-02 {"fillLevel": 5, "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,096 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 15.3, "maxSmokeLevel": 1.6, "maxTemperature": 22.4, "maxFillLevel": 5, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:31,097 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:01:31+00:00"}
+2026-11-06 23:01:36,111 PUBLISH us-a-traf-03 {"vehicleCount": 21, "avgSpeed": 47.6, "occupancy": 16.1, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,112 PUBLISH us-b-bldg-01 {"smokeLevel": 1.1, "temperature": 22.3, "occupancyCount": 15, "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,113 PUBLISH us-a-traf-02 {"vehicleCount": 20, "avgSpeed": 51.8, "occupancy": 16.8, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,115 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,117 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,117 PUBLISH us-a-traf-01 {"vehicleCount": 17, "avgSpeed": 51.9, "occupancy": 16.3, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,118 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,120 PUBLISH us-c-bin-01 {"fillLevel": 5, "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,122 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 16.0, "maxSmokeLevel": 1.1, "maxTemperature": 22.3, "maxFillLevel": 5, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,122 PUBLISH us-c-bin-02 {"fillLevel": 5, "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,123 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,123 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,123 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:36,124 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:01:36+00:00"}
+2026-11-06 23:01:41,139 PUBLISH us-a-traf-03 {"vehicleCount": 22, "avgSpeed": 48.1, "occupancy": 14.8, "congestionLevel": 14, "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,141 PUBLISH us-a-traf-02 {"vehicleCount": 18, "avgSpeed": 48.4, "occupancy": 14.7, "congestionLevel": 14, "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,143 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,144 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,144 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,145 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,146 PUBLISH us-b-bldg-01 {"smokeLevel": 1.6, "temperature": 22.3, "occupancyCount": 15, "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,146 PUBLISH us-c-bin-01 {"fillLevel": 6, "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,146 PUBLISH us-c-bin-02 {"fillLevel": 6, "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,148 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 14.3, "maxSmokeLevel": 1.6, "maxTemperature": 22.3, "maxFillLevel": 6, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,147 PUBLISH us-a-traf-01 {"vehicleCount": 21, "avgSpeed": 50.5, "occupancy": 15.5, "congestionLevel": 15, "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,148 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,149 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:41,150 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:01:41+00:00"}
+2026-11-06 23:01:46,165 PUBLISH us-b-bldg-01 {"smokeLevel": 1.7, "temperature": 21.7, "occupancyCount": 15, "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,166 PUBLISH us-a-traf-02 {"vehicleCount": 18, "avgSpeed": 47.2, "occupancy": 16.8, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,167 PUBLISH us-a-traf-03 {"vehicleCount": 21, "avgSpeed": 49.3, "occupancy": 16.6, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,172 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,172 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,173 PUBLISH us-c-bin-01 {"fillLevel": 6, "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,175 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,177 PUBLISH us-a-traf-01 {"vehicleCount": 17, "avgSpeed": 51.0, "occupancy": 16.7, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,179 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,180 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,180 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,181 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 16.0, "maxSmokeLevel": 1.7, "maxTemperature": 21.7, "maxFillLevel": 6, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,182 PUBLISH us-c-bin-02 {"fillLevel": 6, "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:46,184 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:01:46+00:00"}
+2026-11-06 23:01:51,193 PUBLISH us-a-traf-03 {"vehicleCount": 18, "avgSpeed": 52.9, "occupancy": 13.2, "congestionLevel": 13, "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,194 PUBLISH us-a-traf-01 {"vehicleCount": 21, "avgSpeed": 49.9, "occupancy": 15.8, "congestionLevel": 15, "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,195 PUBLISH us-b-bldg-01 {"smokeLevel": 2.2, "temperature": 21.6, "occupancyCount": 15, "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,198 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,199 PUBLISH us-a-traf-02 {"vehicleCount": 22, "avgSpeed": 51.5, "occupancy": 16.3, "congestionLevel": 16, "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,200 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,201 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,202 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,203 PUBLISH us-c-bin-01 {"fillLevel": 6, "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,203 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,204 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,205 PUBLISH us-c-bin-02 {"fillLevel": 6, "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,205 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 14.7, "maxSmokeLevel": 2.2, "maxTemperature": 21.6, "maxFillLevel": 6, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:51,205 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:01:51+00:00"}
+2026-11-06 23:01:56,216 PUBLISH us-a-traf-03 {"vehicleCount": 20, "avgSpeed": 52.3, "occupancy": 14.8, "congestionLevel": 14, "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,218 PUBLISH us-b-bldg-01 {"smokeLevel": 2.4, "temperature": 22.3, "occupancyCount": 15, "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,220 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,220 PUBLISH us-a-traf-01 {"vehicleCount": 19, "avgSpeed": 48.4, "occupancy": 13.1, "congestionLevel": 13, "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,220 PUBLISH us-a-traf-02 {"vehicleCount": 19, "avgSpeed": 52.2, "occupancy": 15.5, "congestionLevel": 15, "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,224 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,224 PUBLISH us-c-bin-01 {"fillLevel": 7, "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,227 PUBLISH us-c-bin-02 {"fillLevel": 7, "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,227 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,228 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,229 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,230 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 14.0, "maxSmokeLevel": 2.4, "maxTemperature": 22.3, "maxFillLevel": 7, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:56,230 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:01:57,230 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:01:56+00:00"}
+2026-11-06 23:02:01,241 PUBLISH us-a-traf-03 {"vehicleCount": 21, "avgSpeed": 52.6, "occupancy": 16.5, "congestionLevel": 16, "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,242 PUBLISH us-b-bldg-01 {"smokeLevel": 2.0, "temperature": 22.1, "occupancyCount": 15, "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,244 PUBLISH us-a-traf-01 {"vehicleCount": 18, "avgSpeed": 50.4, "occupancy": 14.0, "congestionLevel": 13, "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,245 PUBLISH us-a-traf-02 {"vehicleCount": 19, "avgSpeed": 47.4, "occupancy": 16.3, "congestionLevel": 16, "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,246 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,250 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,252 PUBLISH us-c-bin-02 {"fillLevel": 7, "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,253 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,254 PUBLISH us-c-bin-01 {"fillLevel": 7, "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,255 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,254 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,255 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,256 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:01,256 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 15.0, "maxSmokeLevel": 2.0, "maxTemperature": 22.1, "maxFillLevel": 7, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:02:01+00:00"}
+2026-11-06 23:02:06,060 NOTE Still calm after 40 s. Expected: the Brain wrote nothing.
+2026-11-06 23:02:06,070 PUBLISH us-a-traf-03 {"vehicleCount": 19, "avgSpeed": 47.1, "occupancy": 13.6, "congestionLevel": 13, "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,072 PUBLISH us-a-traf-02 {"vehicleCount": 19, "avgSpeed": 49.9, "occupancy": 13.5, "congestionLevel": 13, "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,073 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,073 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,074 PUBLISH us-b-bldg-01 {"smokeLevel": 2.9, "temperature": 21.7, "occupancyCount": 15, "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,075 PUBLISH us-a-traf-01 {"vehicleCount": 19, "avgSpeed": 49.1, "occupancy": 14.8, "congestionLevel": 14, "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,076 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,080 PUBLISH us-c-bin-02 {"fillLevel": 7, "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,080 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,082 PUBLISH us-c-bin-01 {"fillLevel": 7, "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,083 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,083 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 13.3, "maxSmokeLevel": 2.9, "maxTemperature": 21.7, "maxFillLevel": 7, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,084 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:06,085 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:02:06+00:00"}
+2026-11-06 23:02:11,095 PUBLISH us-a-traf-03 {"vehicleCount": 21, "avgSpeed": 48.6, "occupancy": 13.5, "congestionLevel": 13, "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,099 PUBLISH us-b-bldg-01 {"smokeLevel": 1.8, "temperature": 21.9, "occupancyCount": 15, "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,100 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,103 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,105 PUBLISH us-a-traf-02 {"vehicleCount": 21, "avgSpeed": 53.0, "occupancy": 15.7, "congestionLevel": 15, "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,106 PUBLISH us-c-bin-02 {"fillLevel": 7, "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,107 PUBLISH us-a-traf-01 {"vehicleCount": 22, "avgSpeed": 49.0, "occupancy": 14.2, "congestionLevel": 14, "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,107 PUBLISH us-c-bin-01 {"fillLevel": 7, "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,110 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,109 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,110 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,110 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 14.0, "maxSmokeLevel": 1.8, "maxTemperature": 21.9, "maxFillLevel": 7, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,111 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:11,113 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:02:11+00:00"}
+2026-11-06 23:02:16,124 PUBLISH us-b-bldg-01 {"smokeLevel": 2.2, "temperature": 21.8, "occupancyCount": 15, "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,126 PUBLISH us-a-traf-02 {"vehicleCount": 18, "avgSpeed": 52.4, "occupancy": 16.6, "congestionLevel": 16, "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,127 PUBLISH us-a-traf-01 {"vehicleCount": 17, "avgSpeed": 52.2, "occupancy": 15.5, "congestionLevel": 15, "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,128 PUBLISH us-a-traf-03 {"vehicleCount": 19, "avgSpeed": 52.5, "occupancy": 13.4, "congestionLevel": 13, "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,130 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,132 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,135 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,135 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,136 PUBLISH us-c-bin-01 {"fillLevel": 8, "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,136 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 14.7, "maxSmokeLevel": 2.2, "maxTemperature": 21.8, "maxFillLevel": 8, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,137 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,138 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,138 PUBLISH us-c-bin-02 {"fillLevel": 8, "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:16,139 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:02:16+00:00"}
+2026-11-06 23:02:21,154 PUBLISH us-a-traf-02 {"vehicleCount": 17, "avgSpeed": 50.5, "occupancy": 13.1, "congestionLevel": 13, "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,156 PUBLISH us-b-bldg-01 {"smokeLevel": 1.2, "temperature": 22.2, "occupancyCount": 15, "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,156 PUBLISH us-a-traf-01 {"vehicleCount": 17, "avgSpeed": 50.5, "occupancy": 14.3, "congestionLevel": 14, "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,158 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,159 PUBLISH us-a-traf-03 {"vehicleCount": 21, "avgSpeed": 48.9, "occupancy": 13.2, "congestionLevel": 13, "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,160 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,161 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,163 PUBLISH us-c-bin-01 {"fillLevel": 8, "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,164 PUBLISH us-c-bin-02 {"fillLevel": 8, "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,166 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,166 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 13.3, "maxSmokeLevel": 1.2, "maxTemperature": 22.2, "maxFillLevel": 8, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,167 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,167 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:21,167 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:02:21+00:00"}
+2026-11-06 23:02:26,178 PUBLISH us-a-traf-01 {"vehicleCount": 18, "avgSpeed": 51.2, "occupancy": 14.4, "congestionLevel": 14, "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,179 PUBLISH us-a-traf-02 {"vehicleCount": 18, "avgSpeed": 51.2, "occupancy": 14.4, "congestionLevel": 14, "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,185 PUBLISH us-a-light-03 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,182 PUBLISH us-b-bldg-01 {"smokeLevel": 2.1, "temperature": 21.8, "occupancyCount": 15, "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,186 PUBLISH us-a-traf-03 {"vehicleCount": 19, "avgSpeed": 51.7, "occupancy": 15.8, "congestionLevel": 15, "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,186 PUBLISH us-b-alarm-01 {"alarmState": "off", "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,189 PUBLISH us-c-cam-01 {"dumpingDetected": false, "confidence": 0.0, "status": "active", "message": "ok", "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,191 PUBLISH us-a-light-01 {"phase": "red", "cycleTime": 60, "mode": "auto", "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,194 PUBLISH us-c-bin-02 {"fillLevel": 8, "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,195 PUBLISH us-c-bin-01 {"fillLevel": 8, "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,195 PUBLISH us-ops-center {"cityStatus": "NORMAL", "devicesNormal": 13, "devicesWarning": 0, "devicesCritical": 0, "devicesOffline": 0, "activeAlerts": 0, "activeAlertsText": "none", "emergencyStatus": "No active emergency", "avgCongestion": 14.3, "maxSmokeLevel": 2.1, "maxTemperature": 21.8, "maxFillLevel": 8, "lightPhase": "red", "lightMode": "auto", "signMessage": "none", "alarmState": "off", "dispatchStatus": "idle", "cleaningTaskStatus": "none", "lastEventTime": "", "lastEventMessage": "none", "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,196 PUBLISH us-b-disp-01 {"status": "idle", "unitsDispatched": 0, "incidentId": "", "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,197 PUBLISH us-a-sign-01 {"message": "", "roadClosed": false, "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,197 PUBLISH us-c-task-01 {"taskStatus": "none", "location": "", "timestamp": "2026-11-06T22:02:26+00:00"}
+2026-11-06 23:02:26,197 SCENARIO n1 end

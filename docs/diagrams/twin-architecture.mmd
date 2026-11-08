@@ -1,0 +1,7 @@
+flowchart LR
+  Cfg["config.json<br/>addresses, limits"] --> Engine
+  Scn["scenarios.json<br/>steps and timing"] --> Engine
+  Engine["Engine<br/>one tick every 5 s"] <--> Model["City model<br/>devices and effects"]
+  Engine <--> Client["Orion client<br/>the only door out"]
+  Client <-- "HTTPS, JSON" --> Broker["Broker<br/>Snap4City"]
+  Web["Web page<br/>Scenario Control"] <--> Engine

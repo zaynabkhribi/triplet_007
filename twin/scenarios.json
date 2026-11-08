@@ -1,0 +1,242 @@
+{
+ "_comment": "Scenarios of the Twin. step = [seconds, action, target, argument]. Actions: mode, cmd (acts as the Brain), note. resolved_when = device kinds that must be back to normal for the incident to end; none = lasts until Reset all.",
+ "calm": {
+  "zone": "",
+  "title": "calm",
+  "description": "",
+  "duration": 30,
+  "steps": [
+   [
+    0,
+    "note",
+    null,
+    "Normal day. Expected: no incident, no actuator command."
+   ]
+  ]
+ },
+ "n1": {
+  "zone": "ALL ZONES",
+  "title": "Calm day",
+  "description": "A normal 60-second day. The Guardian should trust the sensors and the Brain should not issue commands.",
+  "duration": 60,
+  "finish_after_duration": true,
+  "steps": [
+   [
+    0,
+    "note",
+    null,
+    "Normal day. Expected: no incident, no actuator command."
+   ]
+  ]
+ },
+ "a1": {
+  "zone": "ZONE A",
+  "title": "Traffic jam",
+  "description": "Roads 1 and 2 jam up. The Brain turns a light green and shows a message on the sign.",
+  "duration": 100,
+  "resolved_when": [
+   "traffic"
+  ],
+  "steps": [
+   [
+    5,
+    "note",
+    null,
+    "Rush hour jam on roads 1 and 2"
+   ],
+   [
+    5,
+    "mode",
+    "us-a-traf-01",
+    "jam"
+   ],
+   [
+    5,
+    "mode",
+    "us-a-traf-02",
+    "jam"
+   ],
+   [
+    35,
+    "note",
+    null,
+    "Brain response: manual green + variable message sign"
+   ],
+   [
+    35,
+    "cmd",
+    "us-a-light-01",
+    {
+     "phase": "green",
+     "mode": "manual"
+    }
+   ],
+   [
+    35,
+    "cmd",
+    "us-a-sign-01",
+    {
+     "message": "Congestion ahead, use alternate route"
+    }
+   ]
+  ]
+ },
+ "b1": {
+  "zone": "ZONE B",
+  "title": "Fire incident",
+  "description": "Smoke and heat rise in the building. The Brain sounds the alarm and dispatches units.",
+  "duration": 90,
+  "resolved_when": [
+   "building"
+  ],
+  "steps": [
+   [
+    5,
+    "note",
+    null,
+    "Real fire: smoke and temperature rise, people inside"
+   ],
+   [
+    5,
+    "mode",
+    "us-b-bldg-01",
+    "fire"
+   ],
+   [
+    20,
+    "note",
+    null,
+    "Brain response: alarm + emergency dispatch"
+   ],
+   [
+    20,
+    "cmd",
+    "us-b-alarm-01",
+    {
+     "alarmState": "on"
+    }
+   ],
+   [
+    20,
+    "cmd",
+    "us-b-disp-01",
+    {
+     "status": "dispatched",
+     "unitsDispatched": 2,
+     "incidentId": "INC-B1"
+    }
+   ]
+  ]
+ },
+ "c1": {
+  "zone": "ZONE C",
+  "title": "Waste / illegal dumping",
+  "description": "Dumping next to a full bin. The Brain creates a municipal cleaning task.",
+  "duration": 80,
+  "resolved_when": [
+   "camera",
+   "bin"
+  ],
+  "steps": [
+   [
+    5,
+    "note",
+    null,
+    "Illegal dumping next to a nearly full bin"
+   ],
+   [
+    5,
+    "mode",
+    "us-c-cam-01",
+    "dump"
+   ],
+   [
+    5,
+    "mode",
+    "us-c-bin-01",
+    "full"
+   ],
+   [
+    40,
+    "note",
+    null,
+    "Brain response: municipal cleaning task"
+   ],
+   [
+    40,
+    "cmd",
+    "us-c-task-01",
+    {
+     "taskStatus": "created",
+     "location": "collection point 1"
+    }
+   ]
+  ]
+ },
+ "g1": {
+  "zone": "GUARDIAN",
+  "title": "Spoofed smoke reading",
+  "description": "Smoke 400 ppm with normal temperature: must be untrusted.",
+  "duration": 40,
+  "steps": [
+   [
+    5,
+    "note",
+    null,
+    "Spoofed reading: smoke 400 ppm but temperature normal. Expected: Guardian marks it untrusted, Brain must NOT sound the alarm."
+   ],
+   [
+    5,
+    "mode",
+    "us-b-bldg-01",
+    "spoof_smoke"
+   ]
+  ]
+ },
+ "g2": {
+  "zone": "GUARDIAN",
+  "title": "Sensor faults",
+  "description": "Traffic-03 stuck and traffic-02 dead.",
+  "duration": 40,
+  "steps": [
+   [
+    5,
+    "note",
+    null,
+    "Sensor faults: traffic-03 stuck, traffic-02 dead. Expected: Guardian flags both within seconds."
+   ],
+   [
+    5,
+    "mode",
+    "us-a-traf-03",
+    "stuck"
+   ],
+   [
+    5,
+    "mode",
+    "us-a-traf-02",
+    "dead"
+   ]
+  ]
+ },
+ "g3": {
+  "zone": "GUARDIAN",
+  "title": "Fake traffic jam",
+  "description": "Constant jam values on road 3.",
+  "duration": 40,
+  "steps": [
+   [
+    5,
+    "note",
+    null,
+    "Fake jam on road 3 (constant jam values). Expected: Guardian untrusts it."
+   ],
+   [
+    5,
+    "mode",
+    "us-a-traf-03",
+    "fake_jam"
+   ]
+  ]
+ }
+}

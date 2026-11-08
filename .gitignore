@@ -1,0 +1,16 @@
+# Keys and passwords: never commit these
+secrets.json
+**/secrets.json
+brain_secrets.json
+**/brain_secrets.json
+guardian_secrets.json
+**/guardian_secrets.json
+.env
+certs/
+
+# Local files
+__pycache__/
+.venv/
+twin/mock_run/
+logs/session-*.log
+secrets.example.json

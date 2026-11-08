@@ -1,0 +1,13 @@
+flowchart LR
+  Twin["Twin<br/>simulated city"]
+  Broker["Orion broker<br/>Snap4City, NGSI v2"]
+  Guardian["Guardian<br/>judges readings"]
+  Brain["Brain<br/>decides and acts"]
+  Dash["Dashboard<br/>Node-RED and widgets"]
+  Twin -- "sensor readings (PATCH)" --> Broker
+  Broker -- "actuator values (GET)" --> Twin
+  Broker -- "readings (GET)" --> Guardian
+  Guardian -- "verdicts (format to agree)" --> Brain
+  Broker -- "readings (GET)" --> Brain
+  Brain -- "commands (PATCH)" --> Broker
+  Broker -- "city summary" --> Dash

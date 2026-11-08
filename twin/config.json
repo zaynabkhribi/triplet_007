@@ -1,0 +1,86 @@
+{
+  "_comment": "Non-secret settings. Copy to config.json. K1/K2 go in secrets.json, never here.",
+  "orion": {
+    "base_url": "https://smartopia.polytecsousse.dev/orion-filter/orion-1",
+    "api": "v2",
+    "timeout": 10,
+    "ca": null
+  },
+  "tick_seconds": 5,
+  "devices": {
+    "us-a-traf-01": {
+      "kind": "traffic",
+      "type": "TrafficSensor"
+    },
+    "us-a-traf-02": {
+      "kind": "traffic",
+      "type": "TrafficSensor"
+    },
+    "us-a-traf-03": {
+      "kind": "traffic",
+      "type": "TrafficSensor"
+    },
+    "us-a-light-01": {
+      "kind": "light",
+      "type": "TrafficLight"
+    },
+    "us-a-light-03": {
+      "kind": "light",
+      "type": "TrafficLight"
+    },
+    "us-a-sign-01": {
+      "kind": "sign",
+      "type": "EmergencyDispatch"
+    },
+    "us-b-bldg-01": {
+      "kind": "building",
+      "type": "BuildingSensor"
+    },
+    "us-b-alarm-01": {
+      "kind": "alarm",
+      "type": "FireAlarm"
+    },
+    "us-b-disp-01": {
+      "kind": "dispatch",
+      "type": "EmergencyDispatch"
+    },
+    "us-c-cam-01": {
+      "kind": "camera",
+      "type": "IPCamera"
+    },
+    "us-c-bin-01": {
+      "kind": "bin",
+      "type": "WasteBin"
+    },
+    "us-c-bin-02": {
+      "kind": "bin",
+      "type": "WasteBin"
+    },
+    "us-c-task-01": {
+      "kind": "task",
+      "type": "CleaningTask"
+    },
+    "us-ops-center": {
+      "kind": "ops",
+      "type": "OperationsCenter"
+    }
+  },
+  "ui": {
+    "dashboard_url": "https://smartopia.polytecsousse.dev/dashboardSmartCity/view/index.php?iddasboard=Mjc="
+  },
+  "thresholds": {
+    "traffic_warning": 50,
+    "traffic_critical": 75,
+    "smoke_warning": 10,
+    "smoke_critical": 100,
+    "temperature_warning": 38,
+    "temperature_critical": 60,
+    "fill_warning": 80,
+    "fill_critical": 95,
+    "offline_after_ticks": 3
+  },
+  "effects": {
+    "fire_suppress_ticks": 6,
+    "cleaning_ticks": 3
+  }
+}
