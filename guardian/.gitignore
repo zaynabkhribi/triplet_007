@@ -1,0 +1,16 @@
+# Runtime artifacts — never committed.
+# The audit log is the running service's evidence trail, not source: it grows on
+# every poll and would otherwise be committed by accident after a local demo.
+logs/audit.jsonl
+logs/*.jsonl
+
+# Secrets: the Guardian's own K1/K2 for TrustVerdict write-back.
+guardian_secrets.json
+*_secrets.json
+
+# Local environment
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/

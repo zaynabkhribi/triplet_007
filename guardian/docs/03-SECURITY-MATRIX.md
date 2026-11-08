@@ -4,7 +4,7 @@
 not tested is a claim, not a control. Every row below names the exact automated test
 that would fail if the control regressed.
 
-Run all of it with one command: `cd guardian && make test` (**199 tests, 19 of them
+Run all of it with one command: `cd guardian && make test` (**200 tests, 19 of them
 the adversarial matrix below**).
 
 ---

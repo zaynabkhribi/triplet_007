@@ -13,7 +13,7 @@ Run everything from `guardian/`. Times are measured on a laptop, Python 3.9/3.11
 | # | Claim | Prove it | Expected |
 |---|---|---|---|
 | A1 | Clean setup in well under 10 minutes | `make setup` | finishes in ~20 s |
-| A2 | The whole suite passes | `make test` | **199 passed** |
+| A2 | The whole suite passes | `make test` | **200 passed** |
 | A3 | No static-analysis findings | `make lint` | `All checks passed!` |
 | A4 | Every scenario is reproducible, not lucky | `make checks` twice | identical verdicts both times |
 | A5 | Checks are a gate, not a print | `PYTHONPATH=src:. .venv/bin/python scenarios/run_check.py` | exit code 0 only when all nine pass |
@@ -79,6 +79,7 @@ Full threat → control → proof table: [`03-SECURITY-MATRIX.md`](03-SECURITY-M
 | D6 | The layer runs with no platform account | `make checks` (offline fake broker) | all nine pass, no network |
 | D7 | A manual read is explainable per frame | `curl -XPOST localhost:8090/v1/ngsi/poll -d '{}'` | per-frame `accepted`/`code` plus the verdicts |
 | D8 | Container path works | `docker compose up -d guardian` (repo root) | serves on :8090, poller starts |
+| D8a | The image is self-contained | build from `guardian/` with only the files the Dockerfile copies | app boots with no parent-repo files: `/healthz`, `/verdicts`, `/ui/`, `POST /v1/ngsi/poll {}` all answer |
 | D9 | Malformed input fails with a code, not a crash | `make test` → malformed-body sweep | stable code, HTTP 4xx, never 500 |
 
 Searchable proof that no host is hard-coded:
@@ -127,6 +128,12 @@ We would rather a reviewer hear these from us than find them:
    does not prevent deletion of the whole file.
 7. **Write-back is off by default.** Publishing `TrustVerdict` entities needs the Guardian's
    own K1/K2, which are never committed; `/verdicts` is the delivery path that ships armed.
+8. **The Docker image was verified by layout, not by a daemon build.** The build machine for
+   this submission had no reachable Docker daemon, so instead of claiming a build we ran the
+   app from a copy containing *only* the files the Dockerfile ships, in a fresh venv from
+   `requirements.txt`. That path exercises every runtime dependency; it does not prove the
+   `docker build` layer cache or base-image pull. On a machine with Docker, `docker compose
+   up -d guardian` is the one command to confirm it.
 
 ---
 

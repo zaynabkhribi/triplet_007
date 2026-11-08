@@ -16,7 +16,7 @@ recover, then the jury falls back to code and logs.
 
 ```bash
 cd repo/guardian && make setup          # only if the venv is missing
-make test                               # 199 passed — do this BEFORE the slot
+make test                               # 200 passed — do this BEFORE the slot
 make checks                             # all nine scenarios -> logs/, PASS/FAIL
 make demo                               # :8090 up
 # second terminal, warm the feed:
@@ -186,7 +186,7 @@ a partner team on stage. The spec scores our layer, not theirs.
 | Poll cadence | **5 s** (= the Twin's tick) |
 | `OFFLINE` after | **20 s** ≈ 4 silent polls |
 | Passport TTL | **6 s** |
-| Tests | **199**, of which **19** adversarial |
+| Tests | **200**, of which **19** adversarial |
 | Full commits on false evidence | **0** (asserted by test) |
 | Scenarios | **9**, all replayable offline with one command |
 | Trust thresholds | `TRUSTED ≥ 0.80` · `SUSPECT 0.50–0.79` · `RESTRICT < 0.50` · hard flag → `MALICIOUS` (capped 0.49) |
