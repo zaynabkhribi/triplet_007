@@ -1,0 +1,1 @@
+{"version": "1.0.0", "simulation_only": true, "rules": [{"id": "simulation", "incident_type": "abnormal_temperature", "measurement": "temperature", "unit": "degC", "thresholds": {"medium": 10}, "persistence_seconds": 5, "min_samples": 2, "recovery_seconds": 5, "recovery_samples": 2, "cooldown_seconds": 30, "mode": "above"}]}

@@ -1,0 +1,43 @@
+# Synthetic demonstration thresholds only. Not emergency or operational guidance.
+version: 1.0.0
+simulation_only: true
+rules:
+  - id: demo-traffic-congestion
+    incident_type: traffic_congestion
+    measurement: traffic
+    unit: METR-LA_native_speed
+    mode: below
+    thresholds: {medium: 32, high: 20, critical: 12}
+    zones: [central]
+    persistence_seconds: 2
+    min_samples: 3
+    min_sensors: 2
+    recovery_seconds: 2
+    recovery_samples: 3
+    cooldown_seconds: 5
+  - id: demo-building-fire
+    incident_type: smoke_alert
+    measurement: smoke
+    unit: ppm
+    mode: above
+    thresholds: {medium: 4, high: 10, critical: 20}
+    zones: [north]
+    persistence_seconds: 2
+    min_samples: 3
+    min_sensors: 2
+    recovery_seconds: 2
+    recovery_samples: 3
+    cooldown_seconds: 5
+  - id: demo-water-rise
+    incident_type: rapid_water_rise
+    measurement: water_level
+    unit: ft
+    mode: rise
+    thresholds: {medium: 0.2, high: 0.5, critical: 1.0}
+    zones: [riverside]
+    persistence_seconds: 2
+    min_samples: 3
+    min_sensors: 2
+    recovery_seconds: 2
+    recovery_samples: 3
+    cooldown_seconds: 5

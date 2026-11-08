@@ -1,0 +1,73 @@
+# Synthetic demonstration only. Unapproved and unavailable until explicitly configured.
+version: 1.0.0
+simulation_only: true
+approved: false
+approval_reference: ""
+approved_incident_config_sha256: ""
+resources:
+  simulation-budget:
+    available: false
+    observed_at: "2000-01-01T00:00:00Z"
+    valid_until: "2000-01-01T01:00:00Z"
+    capacity: 1
+    zones: [simulation]
+actuators:
+  simulation-controller:
+    available: false
+    observed_at: "2000-01-01T00:00:00Z"
+    valid_until: "2000-01-01T01:00:00Z"
+    zone: simulation
+    capabilities:
+      simulation_traffic_response: &parameters
+        level: {minimum: 0, maximum: 1}
+      simulation_water_response: *parameters
+      simulation_power_response: *parameters
+      simulation_air_response: *parameters
+      simulation_fire_response: *parameters
+actions:
+  - &response
+    id: simulation-traffic
+    incident_types: [traffic_congestion, traffic_speed_drop]
+    zones: [simulation]
+    minimum_severity: medium
+    action_type: simulation_traffic_response
+    actuator_id: simulation-controller
+    parameters: {level: 1}
+    resources: {simulation-budget: 1}
+    cost: 1
+    benefit: 1
+    safety_critical: true
+    requires_approval: true
+  - <<: *response
+    id: simulation-water
+    incident_types: [high_water, rapid_water_rise]
+    action_type: simulation_water_response
+  - <<: *response
+    id: simulation-power
+    incident_types: [power_overload, abnormal_power_load]
+    action_type: simulation_power_response
+  - <<: *response
+    id: simulation-air
+    incident_types: [air_pollution]
+    action_type: simulation_air_response
+  - <<: *response
+    id: simulation-fire
+    incident_types: [smoke_alert, abnormal_temperature]
+    action_type: simulation_fire_response
+optimization:
+  max_actions: 1
+  max_candidates: 128
+  timeout_seconds: 1
+  severity_weights: {low: 1, medium: 2, high: 3, critical: 4}
+  urgency_weights:
+    traffic_congestion: 1
+    traffic_speed_drop: 1
+    high_water: 1
+    rapid_water_rise: 1
+    power_overload: 1
+    abnormal_power_load: 1
+    air_pollution: 1
+    smoke_alert: 1
+    abnormal_temperature: 1
+  zone_weights: {simulation: 1}
+  cost_weight: 1

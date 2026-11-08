@@ -1,0 +1,14 @@
+version: 1.0.0
+simulation_only: true
+approved: false
+approval_reference: ""
+approved_incident_config_sha256: ""
+resources: {}
+actuators: {}
+actions: []
+optimization:
+  max_actions: 0
+  severity_weights: {}
+  urgency_weights: {}
+  zone_weights: {}
+

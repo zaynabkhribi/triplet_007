@@ -1,0 +1,14 @@
+zones: [central, north, riverside]
+window_seconds: 300
+ema_alpha: 0.3
+sensors:
+  - {sensor_id: traffic-central-01, zone_id: central, measurement: traffic, unit: METR-LA_native_speed, freshness_seconds: 30}
+  - {sensor_id: traffic-central-02, zone_id: central, measurement: traffic, unit: METR-LA_native_speed, freshness_seconds: 30}
+  - {sensor_id: traffic-central-03, zone_id: central, measurement: traffic, unit: METR-LA_native_speed, freshness_seconds: 30}
+  - {sensor_id: smoke-north-01, zone_id: north, measurement: smoke, unit: ppm, freshness_seconds: 30}
+  - {sensor_id: smoke-north-02, zone_id: north, measurement: smoke, unit: ppm, freshness_seconds: 30}
+  - {sensor_id: temperature-north-01, zone_id: north, measurement: temperature, unit: degC, freshness_seconds: 30}
+  - {sensor_id: temperature-north-02, zone_id: north, measurement: temperature, unit: degC, freshness_seconds: 30}
+  - {sensor_id: water-riverside-01, zone_id: riverside, measurement: water_level, unit: ft, freshness_seconds: 30}
+  - {sensor_id: water-riverside-02, zone_id: riverside, measurement: water_level, unit: ft, freshness_seconds: 30}
+  - {sensor_id: water-riverside-03, zone_id: riverside, measurement: water_level, unit: ft, freshness_seconds: 30}

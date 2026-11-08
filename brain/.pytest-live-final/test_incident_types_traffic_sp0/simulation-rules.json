@@ -1,0 +1,1 @@
+{"version": "1.0.0", "simulation_only": true, "rules": [{"id": "simulation", "incident_type": "traffic_speed_drop", "measurement": "traffic", "unit": "METR-LA_native_speed", "thresholds": {"medium": 1}, "persistence_seconds": 5, "min_samples": 2, "recovery_seconds": 5, "recovery_samples": 2, "cooldown_seconds": 30, "mode": "fall"}]}

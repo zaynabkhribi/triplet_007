@@ -1,0 +1,43 @@
+services:
+  brain:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: sqlite:////data/city_brain.db
+      CITY_REGISTRY_FILE: config/city.demo.yaml
+      INCIDENT_RULES_FILE: config/incidents.demo.yaml
+      DECISION_POLICY_FILE: config/policies.demo.yaml
+      OPERATIONAL_DEMO_ENABLED: "true"
+      OPERATIONAL_AUTO_APPROVE: "true"
+      ACTUATOR_EXECUTION_ENABLED: "true"
+      ACTUATOR_TRANSPORT: mock_twin
+      TWIN_BASE_URL: http://mock-twin:8001
+      GUARDIAN_BASE_URL: http://mock-guardian:8002
+    ports:
+      - "8000:8000"
+    volumes:
+      - brain-data:/data
+  mock-twin:
+    build: .
+    env_file: .env
+    environment:
+      BRAIN_BASE_URL: http://brain:8000
+      GUARDIAN_BASE_URL: http://mock-guardian:8002
+      CITY_REGISTRY_FILE: config/city.demo.yaml
+      MOCK_SIMULATION_AUTO_START: "true"
+      MOCK_TWIN_ALLOWED_ACTIONS: demo_signal_optimize,demo_fire_alarm,demo_flood_response
+    command: uvicorn mocks.mock_twin:app --host 0.0.0.0 --port 8001
+    ports:
+      - "8001:8001"
+  mock-guardian:
+    build: .
+    env_file: .env
+    environment:
+      BRAIN_BASE_URL: http://brain:8000
+    command: uvicorn mocks.mock_guardian:app --host 0.0.0.0 --port 8002
+    ports:
+      - "8002:8002"
+
+volumes:
+  brain-data:
+

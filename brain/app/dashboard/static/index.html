@@ -1,0 +1,176 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#091724">
+  <title>AegisCity | Operations Center</title>
+  <link rel="stylesheet" href="/dashboard/static/app.css?v=10">
+</head>
+<body>
+  <section id="login" class="login-shell">
+    <form id="login-form" class="login-card">
+      <div class="brand-mark" aria-hidden="true">A</div>
+      <p class="eyebrow">SECURE OPERATIONS ACCESS</p>
+      <h1>AegisCity Brain</h1>
+      <p class="muted">Smart city decision &amp; response console</p>
+      <label for="api-key">Service API key</label>
+      <input id="api-key" type="password" autocomplete="off" required placeholder="Enter your service key">
+      <button type="submit" class="button primary full">Open operations center</button>
+      <p id="login-error" class="error" role="alert"></p>
+    </form>
+  </section>
+
+  <div id="console" class="hidden">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark small" aria-hidden="true">A</div>
+        <div>
+          <strong>AegisCity</strong>
+          <small>BRAIN / OPERATIONS CENTER</small>
+        </div>
+      </div>
+      <div class="header-services" aria-label="Service status">
+        <span class="service" id="twin-status">Twin: checking</span>
+        <span class="service" id="guardian-status">Guardian: checking</span>
+        <span class="service" id="brain-status">Brain: checking</span>
+      </div>
+      <div class="header-end">
+        <span class="environment" id="env">MOCK DATA</span>
+        <span id="role" class="role"></span>
+        <button id="logout" class="button ghost" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <main class="page">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">CITY INTELLIGENCE / LIVE MONITORING</p>
+          <h1>City overview</h1>
+          <p id="updated" class="muted">Connecting to Brain…</p>
+        </div>
+        <div class="intro-status">
+          <span class="pulse-dot"></span>
+          <span>Operational view</span>
+          <small>Mock sensor environment</small>
+        </div>
+      </section>
+
+      <section class="actionbar" aria-label="Operational controls">
+        <div class="actions-start">
+          <span class="group-caption">SYSTEM</span>
+          <button id="start" class="button primary control" type="button">▶ Start stream</button>
+          <button id="stop" class="button outline control" type="button">■ Stop</button>
+        </div>
+        <div class="actions-inject">
+          <span class="group-caption">INJECT CONDITION</span>
+          <button data-injection="traffic" class="button outline control" type="button">Traffic</button>
+          <button data-injection="fire" class="button outline control" type="button">Fire</button>
+          <button data-injection="water" class="button outline control" type="button">Water rise</button>
+          <button id="clear" class="button subtle control" type="button">Clear conditions</button>
+        </div>
+      </section>
+      <div id="toast" class="notice hidden" role="status" aria-live="polite"></div>
+
+      <section id="metrics" class="metric-grid" aria-label="Operational metrics"></section>
+
+      <section class="workspace">
+        <article class="panel city-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">CITY STATE</p>
+              <h2>Infrastructure &amp; sensors</h2>
+            </div>
+            <span id="city-state" class="panel-counter">Waiting for data</span>
+          </div>
+          <p class="panel-note">Schematic zone overview · select a sensor to inspect trusted measurements</p>
+          <div id="city-map" class="city-map" aria-label="Schematic city zones"></div>
+          <div class="map-legend">
+            <span><i class="legend-dot good"></i> Trusted &amp; fresh</span>
+            <span><i class="legend-dot warn"></i> Unavailable / stale</span>
+            <span><i class="legend-dot bad"></i> Quarantined</span>
+          </div>
+        </article>
+
+        <article class="panel incident-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">RESPONSE INTELLIGENCE</p>
+              <h2>Incidents &amp; decisions</h2>
+            </div>
+            <span id="active-count" class="count-bubble">0 active</span>
+          </div>
+          <div id="response-list" class="response-list"></div>
+        </article>
+      </section>
+
+      <section class="lower-grid">
+        <article class="panel sensor-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">SENSOR EXPLORER</p>
+              <h2 id="detail-title">Select a sensor</h2>
+            </div>
+            <span id="detail-status" class="tag">No selection</span>
+          </div>
+          <div id="detail-body" class="sensor-detail muted">
+            Choose any sensor in the city overview to inspect its readings.
+          </div>
+          <div id="sensor-chart" class="chart"></div>
+          <p class="chart-note">Chart shows trusted readings received during this dashboard session.</p>
+        </article>
+
+        <article class="panel guardian-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">DATA INTEGRITY</p>
+              <h2>Guardian verification</h2>
+            </div>
+            <span id="trust-summary" class="tag">—</span>
+          </div>
+          <div id="trust-list" class="trust-list"></div>
+        </article>
+      </section>
+
+      <section class="bottom-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">ACTUATOR STATE</p>
+              <h2>Execution feedback</h2>
+            </div>
+          </div>
+          <div id="action-list" class="compact-list"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">PREDICTIVE INTELLIGENCE</p>
+              <h2>Forecast availability</h2>
+            </div>
+          </div>
+          <div id="forecast-state" class="compact-list"></div>
+        </article>
+      </section>
+
+      <section class="panel activity-panel">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">AUDIT TRAIL</p>
+            <h2>Operational activity</h2>
+          </div>
+          <span id="stream-state" class="tag">Connecting</span>
+        </div>
+        <div id="timeline" class="activity-list"></div>
+      </section>
+
+      <footer class="footer">
+        AEGISCITY BRAIN <span>·</span>
+        Standalone development system — mock data, simulated actuators
+      </footer>
+    </main>
+  </div>
+  <script src="/dashboard/static/app.js?v=10" defer></script>
+</body>
+</html>

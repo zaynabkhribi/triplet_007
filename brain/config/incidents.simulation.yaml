@@ -1,0 +1,61 @@
+# Synthetic demonstration thresholds only. Not emergency or operational guidance.
+version: 1.0.0
+simulation_only: true
+rules:
+  - id: simulation-congestion
+    incident_type: traffic_congestion
+    measurement: traffic
+    unit: METR-LA_native_speed
+    mode: below
+    thresholds: {medium: 10, high: 5}
+  - id: simulation-speed-drop
+    incident_type: traffic_speed_drop
+    measurement: traffic
+    unit: METR-LA_native_speed
+    mode: fall
+    thresholds: {medium: 1, high: 2}
+  - id: simulation-water-rise
+    incident_type: rapid_water_rise
+    measurement: water_level
+    unit: ft
+    mode: rise
+    thresholds: {medium: 1, high: 2}
+  - id: simulation-high-water
+    incident_type: high_water
+    measurement: water_level
+    unit: ft
+    thresholds: {medium: 10, high: 20}
+  - id: simulation-power-load
+    incident_type: abnormal_power_load
+    measurement: power_load
+    unit: kW
+    mode: rise
+    thresholds: {medium: 1, high: 2}
+  - id: simulation-overload
+    incident_type: power_overload
+    measurement: power_load
+    unit: kW
+    thresholds: {medium: 10, high: 20}
+  - id: simulation-air-quality
+    incident_type: air_pollution
+    measurement: air_quality
+    unit: ug/m3
+    thresholds: {medium: 10, high: 20}
+  - id: simulation-temperature
+    incident_type: abnormal_temperature
+    measurement: temperature
+    unit: degC
+    thresholds: {medium: 10, high: 20}
+  - id: simulation-smoke
+    incident_type: smoke_alert
+    measurement: smoke
+    unit: ppm
+    thresholds: {medium: 10, high: 20}
+  - id: simulation-water-warning
+    incident_type: high_water
+    measurement: water_level
+    unit: ft
+    source: forecast
+    min_samples: 1
+    persistence_seconds: 0
+    thresholds: {medium: 10, high: 20}

@@ -1,0 +1,4 @@
+zones: []
+sensors: []
+window_seconds: 300
+ema_alpha: 0.3
