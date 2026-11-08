@@ -124,7 +124,7 @@ src/guardian/
 
 Two modules now speak transport, because the triplet has two transports: `ngsi.py` reads
 the broker and `api.py` serves HTTP. Everything between them — pipeline, detectors, score,
-passport, audit — takes plain data and returns plain data, which is why 199 tests exercise
+passport, audit — takes plain data and returns plain data, which is why 200 tests exercise
 the trust logic with no server and no broker at all.
 
 ---

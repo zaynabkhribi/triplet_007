@@ -421,7 +421,9 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         """Read the Orion broker once and feed every frame through the pipeline.
 
         Body (all optional):
-          {"config": "twin/config.json"}   Twin device list + broker base_url
+          {}                               use this Guardian's own configuration
+                                           (config.yaml broker + orion_devices.json)
+          {"config": "twin/config.json"}   a Twin-style device list + its broker
           {"base_url": "...", "devices": {...}}   explicit, for a test
         Returns the per-frame acknowledgement plus a summary, so a reviewer can
         see exactly what was accepted and what the Guardian made of it.
@@ -432,18 +434,27 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         base = payload.get("base_url")
         devices = payload.get("devices")
         if not base or not devices:
-            cfg_path = payload.get("config") or "twin/config.json"
-            try:
-                raw = json.loads(Path(cfg_path).read_text(encoding="utf-8"))
-            except (OSError, ValueError) as exc:
-                raise GuardianError(
-                    BAD_REQUEST, f"cannot read Twin config '{cfg_path}': {exc}",
-                    http_status=422,
-                    details={"hint": "POST {\"base_url\": ..., \"devices\": {...}} instead"},
-                ) from exc
-            orion = raw.get("orion") or {}
-            base = base or orion.get("base_url")
-            devices = devices or raw.get("devices") or {}
+            cfg_path = payload.get("config")
+            if not cfg_path:
+                # No explicit source: read what THIS Guardian is configured for.
+                # Defaulting to a sibling team's twin/config.json would fail
+                # inside the container, where that folder does not exist, and
+                # report a 422 for a perfectly valid manual poll.
+                catalog = app.state.orion_catalog
+                devices = catalog.sensors() if catalog is not None else {}
+                base = settings.orion.base_url
+            else:
+                try:
+                    raw = json.loads(Path(cfg_path).read_text(encoding="utf-8"))
+                except (OSError, ValueError) as exc:
+                    raise GuardianError(
+                        BAD_REQUEST, f"cannot read Twin config '{cfg_path}': {exc}",
+                        http_status=422,
+                        details={"hint": "POST {\"base_url\": ..., \"devices\": {...}} instead"},
+                    ) from exc
+                orion = raw.get("orion") or {}
+                base = base or orion.get("base_url")
+                devices = devices or raw.get("devices") or {}
         if not base or not devices:
             raise GuardianError(BAD_REQUEST, "no broker base_url or device list",
                                 http_status=422)

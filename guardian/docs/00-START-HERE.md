@@ -2,7 +2,7 @@
 
 **Layer owned:** Guardian · **Team:** AEGIS LOOP
 **Repository:** `zaynabkhribi/triplet_007`, folder `guardian/`
-**Status:** the nine triplet scenarios pass end to end · 199 tests green
+**Status:** the nine triplet scenarios pass end to end · 200 tests green
 
 > **Every action carries its own proof.**
 > Sense broadly · Trust explicitly · Act within scope · Verify reality.
@@ -54,7 +54,7 @@ run time.
 ```bash
 cd guardian
 make setup        # venv + deps              (~20 s on a clean machine)
-make test         # 199 tests, all green     (~8 s)
+make test         # 200 tests, all green     (~8 s)
 make checks       # all nine scenarios     -> logs/<id>-<stamp>.log + PASS/FAIL
 ```
 
@@ -148,7 +148,7 @@ All paths are relative to `guardian/`.
 ## 6. Reviewer's five-minute path
 
 ```bash
-cd guardian && make setup && make test    # 199 pass
+cd guardian && make setup && make test    # 200 pass
 make checks                               # nine scenarios, PASS/FAIL, logs written
 make demo &                               # server up on :8090
 curl -s localhost:8090/orion/status | python3 -m json.tool

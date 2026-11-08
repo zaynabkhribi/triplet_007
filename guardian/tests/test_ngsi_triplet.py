@@ -218,3 +218,21 @@ def test_poll_accepts_the_twins_own_device_list(ngsi_client):
     rows = resp.json()["verdicts"]
     assert rows, "mapped devices must still be inventories as OFFLINE"
     assert all(r["verdict"] == "OFFLINE" and r["reason"] == "COMM_LOSS" for r in rows.values()), rows
+
+
+def test_manual_poll_with_no_body_uses_our_own_config(ngsi_client):
+    """`POST /v1/ngsi/poll {}` must work where no sibling repo exists.
+
+    Regression (found by running the shipped image layout): the endpoint
+    defaulted to `twin/config.json`, a partner's path that does not exist inside
+    the container, so a perfectly valid manual poll answered 422. With no body it
+    must read THIS Guardian's configuration — the shipped device snapshot and
+    the broker from config.yaml — exactly as the background poller does.
+    """
+    resp = ngsi_client.post("/v1/ngsi/poll", json={})
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["devices"] >= 1, body
+    # The broker is the real (unreachable-in-test) one from config: the honest
+    # answer is zero frames plus an OFFLINE inventory, never a 422 or a crash.
+    assert "verdicts" in body and body["verdicts"], body

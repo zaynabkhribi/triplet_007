@@ -7,7 +7,7 @@ verdict per entity — so *one lying sensor can never steer the city.*
 > **"Sense broadly. Trust explicitly. Simulate consequences. Act within proof. Verify reality."**
 > Every action carries its own proof.
 
-**Status: the nine triplet scenarios pass end to end.** 199 tests and `make lint` are green, and
+**Status: the nine triplet scenarios pass end to end.** 200 tests and `make lint` are green, and
 `make checks` replays every scenario offline into `logs/` with a PASS/FAIL verdict.
 
 | Scenario | What the Guardian must say | Result |
@@ -136,7 +136,7 @@ guardian/
 ├─ static/               # live timeline UI (dependency-light)
 ├─ mocks/                # orion_world.py (the twin's physics) + mock_orion.py (fake broker)
 ├─ scenarios/            # run_check.py — one command per scenario, PASS/FAIL
-├─ tests/                # 199 passing tests
+├─ tests/                # 200 passing tests
 └─ Makefile              # setup / checks / check id=… / demo / mock-orion / lint
 ```
 

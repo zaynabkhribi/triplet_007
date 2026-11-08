@@ -149,6 +149,6 @@ triplet's other logs use:
 | `tests/test_testbook.py` | the older T1–T7 bands (frame-level fixtures, kept as regression) |
 
 ```bash
-make test        # 199 tests
+make test        # 200 tests
 make lint        # ruff + byte-compile
 ```
