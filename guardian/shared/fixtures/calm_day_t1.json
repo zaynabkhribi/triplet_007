@@ -1,0 +1,72 @@
+{
+  "fixture": "calm_day_t1",
+  "scenario": "T1",
+  "description": "T1 calm day: healthy river + dry rain + calm junction camera. All TRUSTED; Brain must not overreact (reversible only, or nothing).",
+  "ground_truth": {
+    "note": "Twin-internal truth; no attack.",
+    "true_level_m": 0.8
+  },
+  "expected": {
+    "verdict": "TRUSTED",
+    "brain_must": "propose only reversible/no overreaction"
+  },
+  "readings": [
+    {
+      "batch_id": "b-t1",
+      "reading_id": "t1-river-1",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:00Z",
+      "result": {
+        "value": 0.8,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 1
+      },
+      "digest": "sha256:65ec7b9165c7ae973a4bdf2c05037d2548bdf43c829bc3aa02c07c183ba7823c",
+      "signature": "hmac-sha256:9bb5f5645cc030f51e2e965729a6920836118e864ab950856e91c7dae62dc189"
+    },
+    {
+      "batch_id": "b-t1",
+      "reading_id": "t1-rain-1",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:00.500000Z",
+      "result": {
+        "value": 2.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 1
+      },
+      "digest": "sha256:c00966e9bc5ad0cc2e4d01050644a8fd3b3708927413e29c95fe5eb65e96b903",
+      "signature": "hmac-sha256:523e93164f4d25080bd46a127c61d432830ffd25add76627289366da6038494c"
+    },
+    {
+      "batch_id": "b-t1",
+      "reading_id": "t1-cam-1",
+      "sensor_id": "traffic-cam-1",
+      "zone": "Z-CENTRAL_JUNCTION",
+      "observed_property": "traffic_camera",
+      "phenomenon_time": "2026-11-07T10:00:01Z",
+      "result": {
+        "value": 40,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "2.1",
+        "cal": "CAL-11",
+        "seq": 1
+      },
+      "digest": "sha256:4de2e591f0fdde09ac459e679ba0b889b215ee88d313d856848b6512c01fcb41",
+      "signature": "hmac-sha256:d1352d287570def7ae5fb35b0495fa146f193fd2f010509c6b702024be91bd8f"
+    }
+  ]
+}

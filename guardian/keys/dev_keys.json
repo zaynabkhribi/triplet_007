@@ -1,0 +1,165 @@
+{
+  "description": "DEV device registry for the Guardian. Synthetic, non-secret values for the SIMULATED city: the 'secret' entries are throwaway constants used only to exercise HMAC signature verification locally. Real keys are issued per-device and injected via GUARDIAN_HMAC_KEY or a secret manager; the public target is per-device Ed25519. This file is copied into the container because without it every simulated device would resolve to UNKNOWN_DEVICE. The us-* devices are the triplet's Chicago Twin, ingested over NGSI v2 from the Orion broker; they carry no per-frame HMAC secret because the platform authenticates the writer with K1/K2.",
+  "devices": [
+    {
+      "cal": "CAL-07",
+      "device_id": "river-gauge-1",
+      "firmware": "1.4",
+      "public_key": "ed25519:DEV_RIVER",
+      "secret": "dev-secret-river-gauge-1",
+      "sensor_type": "water_level",
+      "zone": "Z-RIVER_UNDERPASS"
+    },
+    {
+      "cal": "CAL-03",
+      "device_id": "rain-gauge-2",
+      "firmware": "1.2",
+      "public_key": "ed25519:DEV_RAIN",
+      "secret": "dev-secret-rain-gauge-2",
+      "sensor_type": "rain",
+      "zone": "Z-RIVER_UNDERPASS"
+    },
+    {
+      "cal": "CAL-11",
+      "device_id": "traffic-cam-1",
+      "firmware": "2.1",
+      "public_key": "ed25519:DEV_CAM",
+      "secret": "dev-secret-traffic-cam-1",
+      "sensor_type": "traffic_camera",
+      "zone": "Z-CENTRAL_JUNCTION"
+    },
+    {
+      "cal": "CAL-05",
+      "device_id": "aqi-stack-1",
+      "firmware": "1.0",
+      "public_key": "ed25519:DEV_AQI",
+      "secret": "dev-secret-aqi-stack-1",
+      "sensor_type": "air_quality",
+      "zone": "Z-INDUSTRIAL"
+    },
+    {
+      "cal": "CAL-09",
+      "device_id": "power-meter-1",
+      "firmware": "3.0",
+      "public_key": "ed25519:DEV_PWR",
+      "secret": "dev-secret-power-meter-1",
+      "sensor_type": "power_load",
+      "zone": "Z-INDUSTRIAL"
+    },
+    {
+      "cal": "CAL-02",
+      "device_id": "ecall-feed-1",
+      "firmware": "1.1",
+      "public_key": "ed25519:DEV_ECALL",
+      "secret": "dev-secret-ecall-feed-1",
+      "sensor_type": "emergency_call",
+      "zone": "Z-HOSPITAL"
+    },
+    {
+      "cal": "CAL-07",
+      "device_id": "port-gauge-1",
+      "firmware": "1.4",
+      "public_key": "ed25519:DEV_PORT_GAUGE",
+      "secret": "dev-secret-port-gauge-1",
+      "sensor_type": "water_level",
+      "zone": "Z-PORT"
+    },
+    {
+      "cal": "CAL-03",
+      "device_id": "port-rain-1",
+      "firmware": "1.2",
+      "public_key": "ed25519:DEV_PORT_RAIN",
+      "secret": "dev-secret-port-rain-1",
+      "sensor_type": "rain",
+      "zone": "Z-PORT"
+    },
+    {
+      "cal": "CAL-11",
+      "device_id": "port-cam-1",
+      "firmware": "2.1",
+      "public_key": "ed25519:DEV_PORT_CAM",
+      "secret": "dev-secret-port-cam-1",
+      "sensor_type": "traffic_camera",
+      "zone": "Z-PORT"
+    },
+    {
+      "cal": "CAL-12",
+      "device_id": "fleet-gps-1",
+      "firmware": "2.0",
+      "public_key": "ed25519:DEV_FLEET_GPS",
+      "secret": "dev-secret-fleet-gps-1",
+      "sensor_type": "gps",
+      "zone": "Z-FLEET"
+    },
+    {
+      "cal": "CAL-A1",
+      "device_id": "us-a-traf-01",
+      "firmware": "1.1",
+      "public_key": null,
+      "secret": null,
+      "sensor_type": "traffic_camera",
+      "zone": "ZONE-A",
+      "source": "triplet_07/twin (NGSI v2 via Orion)"
+    },
+    {
+      "cal": "CAL-A2",
+      "device_id": "us-a-traf-02",
+      "firmware": "1.1",
+      "public_key": null,
+      "secret": null,
+      "sensor_type": "traffic_camera",
+      "zone": "ZONE-A",
+      "source": "triplet_07/twin (NGSI v2 via Orion)"
+    },
+    {
+      "cal": "CAL-A3",
+      "device_id": "us-a-traf-03",
+      "firmware": "1.1",
+      "public_key": null,
+      "secret": null,
+      "sensor_type": "traffic_camera",
+      "zone": "ZONE-A",
+      "source": "triplet_07/twin (NGSI v2 via Orion)"
+    },
+    {
+      "cal": "CAL-B1",
+      "device_id": "us-b-bldg-01",
+      "firmware": "1.1",
+      "public_key": null,
+      "secret": null,
+      "sensor_type": "fire_smoke",
+      "zone": "ZONE-B",
+      "source": "triplet_07/twin (NGSI v2 via Orion)"
+    },
+    {
+      "cal": "CAL-C1",
+      "device_id": "us-c-cam-01",
+      "firmware": "1.1",
+      "public_key": null,
+      "secret": null,
+      "sensor_type": "air_quality",
+      "zone": "ZONE-C",
+      "source": "triplet_07/twin (NGSI v2 via Orion)"
+    },
+    {
+      "cal": "CAL-C2",
+      "device_id": "us-c-bin-01",
+      "firmware": "1.1",
+      "public_key": null,
+      "secret": null,
+      "sensor_type": "power_load",
+      "zone": "ZONE-C",
+      "source": "triplet_07/twin (NGSI v2 via Orion)"
+    },
+    {
+      "cal": "CAL-C3",
+      "device_id": "us-c-bin-02",
+      "firmware": "1.1",
+      "public_key": null,
+      "secret": null,
+      "sensor_type": "power_load",
+      "zone": "ZONE-C",
+      "source": "triplet_07/twin (NGSI v2 via Orion)"
+    }
+  ]
+}

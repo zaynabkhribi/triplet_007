@@ -1,0 +1,72 @@
+{
+  "fixture": "rush_hour_t2",
+  "scenario": "T2",
+  "description": "T2 rush-hour jam: saturated camera + heavy grid + call volume, all corroborating. TRUSTED; Brain proposes reversible signal plan.",
+  "ground_truth": {
+    "note": "Twin-internal truth; real congestion.",
+    "vehicles": 380
+  },
+  "expected": {
+    "verdict": "TRUSTED",
+    "brain_must": "propose signal.hold (reversible) within passport"
+  },
+  "readings": [
+    {
+      "batch_id": "b-t2",
+      "reading_id": "t2-cam-1",
+      "sensor_id": "traffic-cam-1",
+      "zone": "Z-CENTRAL_JUNCTION",
+      "observed_property": "traffic_camera",
+      "phenomenon_time": "2026-11-07T10:00:00Z",
+      "result": {
+        "value": 380,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "2.1",
+        "cal": "CAL-11",
+        "seq": 11
+      },
+      "digest": "sha256:e32ee466a484585790241e922a0429fc5ab26bb9e1f5edb653b3e3570325dd13",
+      "signature": "hmac-sha256:ab073bdf838d0b2f157bc6243f56ebd37edec0060aa92d85ca6a0452068c5bef"
+    },
+    {
+      "batch_id": "b-t2",
+      "reading_id": "t2-power-1",
+      "sensor_id": "power-meter-1",
+      "zone": "Z-CENTRAL_JUNCTION",
+      "observed_property": "power_load",
+      "phenomenon_time": "2026-11-07T10:00:00.500000Z",
+      "result": {
+        "value": 900.0,
+        "unit": "mw"
+      },
+      "provenance": {
+        "firmware": "3.0",
+        "cal": "CAL-09",
+        "seq": 11
+      },
+      "digest": "sha256:1470e34b965d24eb177213587334ccbfe07a77a5d4bfd26c56d19fa64eb503ef",
+      "signature": "hmac-sha256:51917d82e74fcd9ac51cb934869739f851bebb0d9d8ab329f9beaa47666c6ffb"
+    },
+    {
+      "batch_id": "b-t2",
+      "reading_id": "t2-ecall-1",
+      "sensor_id": "ecall-feed-1",
+      "zone": "Z-CENTRAL_JUNCTION",
+      "observed_property": "emergency_call",
+      "phenomenon_time": "2026-11-07T10:00:01Z",
+      "result": {
+        "value": 18,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "1.1",
+        "cal": "CAL-02",
+        "seq": 11
+      },
+      "digest": "sha256:d492cc1820dd065ab641862d19a1ac8c604fc88adf2ea6eb74a0c09dcf8664da",
+      "signature": "hmac-sha256:e220a8553d3ac739a37d21788122eb7178a2b8f161ee987a5c2eac2b4433c938"
+    }
+  ]
+}

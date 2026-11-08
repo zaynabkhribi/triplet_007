@@ -1,0 +1,207 @@
+{
+  "fixture": "combined_t7",
+  "scenario": "T7",
+  "description": "T7 incident + attack: real industrial heat (TRUSTED), fake port flood (SUSPECT), hospital calls (TRUSTED). Per-zone passports; global precautionary only.",
+  "ground_truth": {
+    "note": "Twin-internal truth.",
+    "industrial_heat": true,
+    "port_true_level_m": 0.4,
+    "hospital_incident": true
+  },
+  "expected": {
+    "verdict": "per-zone: Z-INDUSTRIAL TRUSTED, Z-PORT SUSPECT, Z-HOSPITAL TRUSTED",
+    "brain_must": "refuse valve.full_open on port evidence; precautionary only"
+  },
+  "readings": [
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-aqi-1",
+      "sensor_id": "aqi-stack-1",
+      "zone": "Z-INDUSTRIAL",
+      "observed_property": "air_quality",
+      "phenomenon_time": "2026-11-07T10:00:00Z",
+      "result": {
+        "value": 100,
+        "unit": "aqi"
+      },
+      "provenance": {
+        "firmware": "1.0",
+        "cal": "CAL-05",
+        "seq": 51
+      },
+      "digest": "sha256:102d6a38ed1e544cc756191c2b055d441862a53ea0009645d2ba9c314bd28810",
+      "signature": "hmac-sha256:3a5b7fe0c119f132c19bdba7bc1de878fb8296f702cbc72b07eadd71b5fbefc9"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-power-1",
+      "sensor_id": "power-meter-1",
+      "zone": "Z-INDUSTRIAL",
+      "observed_property": "power_load",
+      "phenomenon_time": "2026-11-07T10:00:00.500000Z",
+      "result": {
+        "value": 700.0,
+        "unit": "mw"
+      },
+      "provenance": {
+        "firmware": "3.0",
+        "cal": "CAL-09",
+        "seq": 51
+      },
+      "digest": "sha256:eb134720366a4af3f1eb6a59e5dca513e984c0fecd31fcd6cfead0201db36644",
+      "signature": "hmac-sha256:76d3c0e6464a4df0321f1614e801477b8061705f0aee087302a64c4c1a63dc32"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-aqi-2",
+      "sensor_id": "aqi-stack-1",
+      "zone": "Z-INDUSTRIAL",
+      "observed_property": "air_quality",
+      "phenomenon_time": "2026-11-07T10:00:01Z",
+      "result": {
+        "value": 140,
+        "unit": "aqi"
+      },
+      "provenance": {
+        "firmware": "1.0",
+        "cal": "CAL-05",
+        "seq": 52
+      },
+      "digest": "sha256:9067845a8b5c7439afe4d67c8fb4a3ce64978966fb57f9ac3b9e8689ba7419a2",
+      "signature": "hmac-sha256:cfda891fc40e67ca6a5fe6f488ab010b3ea9026b71de73749aac3b37ba9e37f5"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-power-2",
+      "sensor_id": "power-meter-1",
+      "zone": "Z-INDUSTRIAL",
+      "observed_property": "power_load",
+      "phenomenon_time": "2026-11-07T10:00:01.500000Z",
+      "result": {
+        "value": 760.0,
+        "unit": "mw"
+      },
+      "provenance": {
+        "firmware": "3.0",
+        "cal": "CAL-09",
+        "seq": 52
+      },
+      "digest": "sha256:a799a4ff47675ec54a2fe0cd48f53170d5e5f2116f187eb2fe6959c5a31caad8",
+      "signature": "hmac-sha256:3e921687600707f15237704c7e64451a38a72086d0c56052de5260d63f7df34e"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-aqi-3",
+      "sensor_id": "aqi-stack-1",
+      "zone": "Z-INDUSTRIAL",
+      "observed_property": "air_quality",
+      "phenomenon_time": "2026-11-07T10:00:02Z",
+      "result": {
+        "value": 175,
+        "unit": "aqi"
+      },
+      "provenance": {
+        "firmware": "1.0",
+        "cal": "CAL-05",
+        "seq": 53
+      },
+      "digest": "sha256:0315ec8e383747637f451570ef0f579d50514b46924c2af6fcc470ef2429f993",
+      "signature": "hmac-sha256:025ec832bd263b10dad562b04bc6b326b1c34c7323d6a01ab0b2b07bfed855db"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-port-rain-1",
+      "sensor_id": "port-rain-1",
+      "zone": "Z-PORT",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:02.500000Z",
+      "result": {
+        "value": 0.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 61
+      },
+      "digest": "sha256:b23a9e827496f5f82d6cd499fc44a351c29e3ba88cad7dbf427d712841f15c07",
+      "signature": "hmac-sha256:1ef1b1614d0578dbc0004eb650be1945840c14486305b7b55732fedf101a3a70"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-port-cam-1",
+      "sensor_id": "port-cam-1",
+      "zone": "Z-PORT",
+      "observed_property": "traffic_camera",
+      "phenomenon_time": "2026-11-07T10:00:03Z",
+      "result": {
+        "value": 12,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "2.1",
+        "cal": "CAL-11",
+        "seq": 61
+      },
+      "digest": "sha256:ab7385c93e873b68c294aae891c48e1535d18561a17baf98097f28ef72a6a54d",
+      "signature": "hmac-sha256:e506aabbf7835fd2be30d0a37bc98b9a9ccefdd987f571c48b2dd3e7bef1a63c"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-port-calm",
+      "sensor_id": "port-gauge-1",
+      "zone": "Z-PORT",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:03.500000Z",
+      "result": {
+        "value": 0.4,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 61
+      },
+      "digest": "sha256:f6a87d3d36d9982fdd2afabccadfe29ccb9f9ee8f0014d0b7c1f1035d015458f",
+      "signature": "hmac-sha256:81780d4ab99bb213b694d0e37d3d2a2d312061c69ba8f54301fd05736c0a9d19"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-port-surge",
+      "sensor_id": "port-gauge-1",
+      "zone": "Z-PORT",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:04Z",
+      "result": {
+        "value": 1.8,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 62
+      },
+      "digest": "sha256:b38124b59875ea2403c6b1653e6d26bd0a9201dd8d9fd052f55a4967cbb62ecc",
+      "signature": "hmac-sha256:66d8d0c5c231f33088106885081e0d2cf671471638f81c0d0e3ce525bf335133"
+    },
+    {
+      "batch_id": "b-t7",
+      "reading_id": "t7-ecall-1",
+      "sensor_id": "ecall-feed-1",
+      "zone": "Z-HOSPITAL",
+      "observed_property": "emergency_call",
+      "phenomenon_time": "2026-11-07T10:00:04.500000Z",
+      "result": {
+        "value": 14,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "1.1",
+        "cal": "CAL-02",
+        "seq": 51
+      },
+      "digest": "sha256:6ab8ba84c7aa76babfbae16c77aa9c6cf360ab77527ec6932476e8f2a851a9da",
+      "signature": "hmac-sha256:56d7ee865cfef0cb9a03d96859248ba2a2debf9db46327a5ac3999189f93abc4"
+    }
+  ]
+}

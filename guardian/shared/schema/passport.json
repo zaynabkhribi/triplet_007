@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis-loop.tsyp14/schema/passport.json",
+  "title": "Evidence Passport",
+  "description": "Guardian -> Brain/Twin. A signed, expiring, scope-bound authorization tied to an exact evidence digest. Short TTL (5-7s). Emitted by POST /v1/passport (verdict engine, Week 1 Day 5-6).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passport_id", "issued_at", "ttl_s", "zone", "disposition", "trust",
+    "reason_codes", "evidence_digest", "source_ids", "policy_version",
+    "allowed_actions", "signature"
+  ],
+  "properties": {
+    "passport_id": { "type": "string", "minLength": 1, "examples": ["psp-042"] },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "ttl_s": { "type": "integer", "minimum": 1, "maximum": 30 },
+    "zone": { "type": "string", "minLength": 1 },
+    "disposition": { "type": "string", "enum": ["TRUSTED", "SUSPECT", "MALICIOUS", "RESTRICT"] },
+    "trust": { "type": "number", "minimum": 0, "maximum": 1 },
+    "reason_codes": { "type": "array", "items": { "type": "string" } },
+    "evidence_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "source_ids": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "policy_version": { "type": "string", "minLength": 1 },
+    "allowed_actions": {
+      "type": "array", "items": { "type": "string" },
+      "description": "Derived from disposition via policy.yaml. SUSPECT/RESTRICT never contain a full-commit action."
+    },
+    "conditions": { "type": "array", "items": { "type": "string" }, "examples": [["require_second_source", "prefer_precautionary"]] },
+    "signature": { "type": "string", "minLength": 1 }
+  }
+}

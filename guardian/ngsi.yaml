@@ -1,0 +1,46 @@
+# NGSI v2 attribute mapping — the triplet's Twin -> Guardian readings.
+#
+# This is data, not code (Rule R1: nothing hard-coded). To support a new device
+# or rename a broker attribute, edit this file only.
+#
+# Shape:  attributes.<twin kind>.<ngsi attribute> -> {property, unit}
+#   property  must name a profile in sensor_profiles.yaml, because that profile
+#             supplies the range, rate limit and corroborators the detectors use.
+#   unit      is carried into result.unit and appears in the verdict.
+#
+# The Twin's device list lives in twin/config.json; `kind` there is the key used
+# below, so the two files stay in step by construction.
+
+broker_label: ngsi-orion
+
+attributes:
+
+  # Zone A — traffic (us-a-traf-01..03)
+  traffic:
+    congestionLevel: {property: congestion,      unit: "%"}     # 0..100, the alert driver + the D11 steady rule
+    avgSpeed:        {property: vehicle_speed,   unit: km/h}    # inverted cousin of congestion
+    vehicleCount:    {property: traffic_camera,  unit: count}   # corroborates congestion
+    # `occupancy` duplicates congestionLevel by construction (the Twin derives
+    # both from the same generator, within +/-2 of each other). Mapping it too
+    # would feed the same physics twice into one profile's history windows, so
+    # it is deliberately UNMAPPED — an unmapped attribute is skipped, not guessed
+    # at (see ngsi.py).
+
+  # Zone B — building fire (us-b-bldg-01)
+  # smoke AND temperature must both rise for a real fire; the corroboration
+  # stage needs them as separate properties to compare them.
+  building:
+    smokeLevel:      {property: fire_smoke,        unit: ppm}
+    temperature:     {property: temperature,       unit: C}
+    occupancyCount:  {property: building_occupancy, unit: people}
+
+  # Zone C — camera (us-c-cam-01)
+  camera:
+    dumpingDetected: {property: camera_alert,      unit: state}  # bool 0/1
+    confidence:      {property: camera_confidence, unit: "0-1"}
+    # `status` and `message` are free text without physics — skipped by design.
+
+  # Zone C — bins (us-c-bin-01..02)
+  bin:
+    fillLevel:       {property: fill_level,  unit: "%"}
+

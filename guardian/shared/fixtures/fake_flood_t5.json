@@ -1,0 +1,98 @@
+{
+  "description": "T5 canonical: Fake flood at the port. Port water sensor reports 180cm while the real level is 40cm. Rain + camera stay dry/calm (contradiction). Twin keeps 40cm true internally; Guardian must mark untrusted <10s + isolate; Brain must NOT open the valve.",
+  "fixture": "fake_flood_t5",
+  "ground_truth": {
+    "note": "Hidden from Brain/Guardian. Twin keeps this internally; only the jury sees it.",
+    "true_level_m": 0.4,
+    "reported_level_m": 1.8,
+    "actuator_lie": false,
+    "actuator_note": "The precautionary barrier really does move: the lie is in the SENSOR, not the actuator. Declaring a fault here would be an invented result. The actuator-fault path is proven separately by three MISMATCH witnesses (guardian/tests/test_adversarial.py::test_three_mismatches_quarantine_and_downgrade)."
+  },
+  "scenario": "T5",
+  "expected": {
+    "verdict": "MALICIOUS or SUSPECT (untrusted)",
+    "reason_must_include": [
+      "CONFLICT"
+    ],
+    "brain_must": "refuse valve.full_open with recorded reason; precautionary only",
+    "latency_s": 10
+  },
+  "readings": [
+    {
+      "batch_id": "b-t5-calm",
+      "reading_id": "t5-calm-gauge",
+      "sensor_id": "port-gauge-1",
+      "zone": "Z-PORT",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:00.000Z",
+      "result": {
+        "value": 0.4,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 1
+      },
+      "digest": "sha256:1bcc6e376a27e25c4daac7563b9b10dd25c2f1c3559aa2d9e2e5bbb9db17c280",
+      "signature": "hmac-sha256:fbbe2115602e763c71d8db8be82da918b4f13f0f322b73b6f95e675e3b4bc5d3"
+    },
+    {
+      "batch_id": "b-t5-fake",
+      "reading_id": "t5-port-rain-1-0",
+      "sensor_id": "port-rain-1",
+      "zone": "Z-PORT",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:02.000Z",
+      "result": {
+        "value": 0.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 2
+      },
+      "digest": "sha256:6ba7076afd4dc2fb4954fb932300e0e83a2f00938136d68a07f910939bc4f93b",
+      "signature": "hmac-sha256:fa0dbd3c74e022dad9b7fff4cbb73e730825f08a95ae0e4a4e67330f9b89ef72"
+    },
+    {
+      "batch_id": "b-t5-fake",
+      "reading_id": "t5-port-cam-1-0",
+      "sensor_id": "port-cam-1",
+      "zone": "Z-PORT",
+      "observed_property": "traffic_camera",
+      "phenomenon_time": "2026-11-07T10:00:02.000Z",
+      "result": {
+        "value": 12,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "2.1",
+        "cal": "CAL-11",
+        "seq": 1
+      },
+      "digest": "sha256:d7ac06d9fade7101ca1b98a39b85495c0d2b53c58f1431a473d2438d77c94567",
+      "signature": "hmac-sha256:250897e22144b88dbabefe74098b0ed0c58dd8af86258d8c80fa6f2fe8b278ea"
+    },
+    {
+      "batch_id": "b-t5-fake",
+      "reading_id": "t5-port-gauge-1-0",
+      "sensor_id": "port-gauge-1",
+      "zone": "Z-PORT",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:02.000Z",
+      "result": {
+        "value": 1.8,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 2
+      },
+      "digest": "sha256:7bae8e539deb22564bd2033566fe55cb2da392c6f9a94507d936312f47c11b39",
+      "signature": "hmac-sha256:e58e5897d676139784605241dc1c3ab0a4f4775927b58b147d99c0c3210a2895"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "fixture": "muted_gauge_t4",
+  "scenario": "T4",
+  "description": "T4 sensor dies: river gauge collapses to 0 while rain pours. TAMPER -> MALICIOUS; Brain falls back to rain-only reasoning.",
+  "ground_truth": {
+    "note": "Twin-internal truth; gauge dead, rain real.",
+    "true_level_m": 1.1,
+    "reported_level_m": 0.0
+  },
+  "expected": {
+    "verdict": "MALICIOUS",
+    "reason_must_include": [
+      "TAMPER"
+    ],
+    "brain_must": "refuse full-commit; use second source"
+  },
+  "readings": [
+    {
+      "batch_id": "b-t4",
+      "reading_id": "t4-river-1",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:00Z",
+      "result": {
+        "value": 0.8,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 31
+      },
+      "digest": "sha256:e107034f231e27d9a16c8c64c3121b800f9b7b63b6443869e0ebe0e62bc3d913",
+      "signature": "hmac-sha256:0f781f92e652ede9a6f19a849b9593b430f8caa13bababf6854c0fde91426fdf"
+    },
+    {
+      "batch_id": "b-t4",
+      "reading_id": "t4-rain-1",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:00.500000Z",
+      "result": {
+        "value": 78.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 31
+      },
+      "digest": "sha256:858fd5e8f3e29f6f7ebef3b85b146fb5464002fd71c4ce5263b0400037c33db9",
+      "signature": "hmac-sha256:bb566b484de223a60d128c8c2b276962ab8b8314ca295ee42d146d061c1d0589"
+    },
+    {
+      "batch_id": "b-t4",
+      "reading_id": "t4-river-2",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:01Z",
+      "result": {
+        "value": 0.82,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 32
+      },
+      "digest": "sha256:c41e6f95ba0d75d272ba4cf14f315f61b8d0a7de91bc24433e94d8edfcbcde01",
+      "signature": "hmac-sha256:fe19c6affbbca7bf9cbd9306374912df26ca09b5a129804662b53621e3a7f449"
+    },
+    {
+      "batch_id": "b-t4",
+      "reading_id": "t4-rain-2",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:01.500000Z",
+      "result": {
+        "value": 80.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 32
+      },
+      "digest": "sha256:d77f33e1bba614254a6bd2a9ea6c995834f75b8b5c25dc6be928e0305f99782a",
+      "signature": "hmac-sha256:e21b8faa6d0a5c39f0aee5fa944b3085069a2f23a49de661b69d8fe9be3acb8f"
+    },
+    {
+      "batch_id": "b-t4",
+      "reading_id": "t4-river-mute",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:02Z",
+      "result": {
+        "value": 0.0,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 33
+      },
+      "digest": "sha256:da05aac780145ed0151d0a082d49bb10018772a10c51781c377204d52dce3d88",
+      "signature": "hmac-sha256:91ce5d3e007b2b3930e8b7c65695ca0d231b44322a7e9c742fae71107be65de9"
+    },
+    {
+      "batch_id": "b-t4",
+      "reading_id": "t4-rain-3",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:02.500000Z",
+      "result": {
+        "value": 82.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 33
+      },
+      "digest": "sha256:842003e07aa7588e700f291fe81441320bad31df929d2b6f5e2cebe238bec64a",
+      "signature": "hmac-sha256:cd2015019ddab9328918ce8430721fb2f34b84ae655934dfdba27b06f453adc3"
+    }
+  ]
+}

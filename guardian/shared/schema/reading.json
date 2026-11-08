@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis-loop.tsyp14/schema/reading.json",
+  "title": "Reading",
+  "description": "Twin -> Guardian. One sensor observation. Schema-validated at the boundary (Stage A); invalid => 400 SCHEMA_INVALID.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "batch_id", "sensor_id", "zone", "observed_property",
+    "phenomenon_time", "result", "provenance", "digest", "signature"
+  ],
+  "properties": {
+    "batch_id": { "type": "string", "minLength": 1, "description": "Groups readings emitted together." },
+    "reading_id": { "type": "string", "minLength": 1, "description": "Stable id for dedup/anti-replay. If omitted, Guardian derives it from digest." },
+    "sensor_id": { "type": "string", "minLength": 1 },
+    "zone": { "type": "string", "minLength": 1, "examples": ["Z-RIVER_UNDERPASS", "Z-CENTRAL_JUNCTION", "Z-INDUSTRIAL", "Z-HOSPITAL"] },
+    "observed_property": {
+      "type": "string", "minLength": 1,
+      "description": "Sensor type; must be a key in sensor_profiles.yaml.",
+      "examples": ["water_level", "air_quality", "power_load", "traffic_camera", "emergency_call", "fire_smoke", "gps", "rain", "flow"]
+    },
+    "phenomenon_time": { "type": "string", "format": "date-time", "description": "When the observation happened (source clock)." },
+    "received_at": { "type": "string", "format": "date-time", "description": "Optional; Guardian stamps arrival for freshness if absent." },
+    "result": {
+      "type": "object", "additionalProperties": false, "required": ["value", "unit"],
+      "properties": {
+        "value": { "type": "number" },
+        "unit": { "type": "string", "minLength": 1 }
+      }
+    },
+    "provenance": {
+      "type": "object", "additionalProperties": false, "required": ["firmware", "cal"],
+      "properties": {
+        "firmware": { "type": "string", "minLength": 1 },
+        "cal": { "type": "string", "minLength": 1, "description": "Calibration id; must be known in the registry." },
+        "seq": { "type": "integer", "minimum": 0, "description": "Monotonic sequence; gaps feed the STALE detector." }
+      }
+    },
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "signature": { "type": "string", "minLength": 1, "description": "ed25519:<b64> or hmac-sha256:<hex>. Verified when auth.verify_signatures=true." }
+  }
+}

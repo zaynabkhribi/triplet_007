@@ -1,0 +1,30 @@
+# Ruff config for AEGIS LOOP Guardian.
+#
+# Scoped deliberately to BUG classes, not style: this repo must stay lint-clean on the
+# demo stage, so we do not churn formatting. Selected:
+#   E9  - syntax / IO errors
+#   F   - pyflakes: undefined names, unused imports/variables, f-string bugs
+#   B   - bugbear: mutable defaults, shadowed loop vars, fragile asserts
+#   S   - bandit: obvious security footguns (assert in prod path, hardcoded creds)
+target-version = "py39"
+line-length = 110
+
+[lint]
+select = ["E9", "F", "B", "S"]
+ignore = [
+    "S101",  # asserts are the test suite's job, not a finding
+]
+
+[lint.per-file-ignores]
+# FastAPI's `Body(...)` in a parameter default is the framework's own idiom.
+"src/guardian/api.py" = ["B008"]
+# The mock Twin exists to POST to an arbitrary local Guardian base URL.
+"src/guardian/mock/mock_twin.py" = ["S310"]
+# The mock Brain exists to poll/decide against an arbitrary local Guardian base URL.
+"src/guardian/mock/mock_brain.py" = ["S310"]
+# config.yaml binds 0.0.0.0 on purpose (container / demo-stage deployment).
+"src/guardian/config.py" = ["S104"]
+# NO_SECRET etc. are stable wire CODES, not credentials.
+"src/guardian/errors.py" = ["S105"]
+# Dev throwaway secrets + loop counters in the test suite.
+"tests/*" = ["B011", "S105"]

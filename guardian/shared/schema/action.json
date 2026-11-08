@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis-loop.tsyp14/schema/action.json",
+  "title": "Proof-Carrying Action",
+  "description": "Brain -> Twin. A proposed actuator command that CITES an Evidence Passport. Twin re-verifies passport_id + evidence_digest + action in allowed_actions + ttl not expired, else DENIES with a stable code.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "action_id", "idempotency_key", "passport_id", "evidence_digest",
+    "target", "target_version", "action"
+  ],
+  "properties": {
+    "action_id": { "type": "string", "minLength": 1, "examples": ["a-900"] },
+    "idempotency_key": { "type": "string", "minLength": 1, "description": "Dedup key; prevents double-actuation." },
+    "passport_id": { "type": "string", "minLength": 1 },
+    "evidence_digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$", "description": "Must match the cited passport's evidence_digest." },
+    "target": { "type": "string", "minLength": 1, "examples": ["valve-1", "barrier-2", "pump-1"] },
+    "target_version": { "type": "string", "minLength": 1, "description": "Optimistic-concurrency guard on the actuator." },
+    "action": { "type": "string", "minLength": 1, "examples": ["valve.full_close", "valve.partial_close", "pump.standby", "barrier.partial_close", "signal.hold"] },
+    "params": { "type": "object", "description": "Action-specific params, e.g. { fraction: 0.3 }." }
+  }
+}

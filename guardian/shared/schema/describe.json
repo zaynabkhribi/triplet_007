@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis-loop.tsyp14/schema/describe.json",
+  "title": "Layer Capability Card",
+  "description": "Every layer exposes GET /describe so partners discover capabilities dynamically instead of hard-coding. Validated in tests to guarantee a stable contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["layer", "version", "protocol", "endpoints", "accepts_sensor_types", "emits_dispositions", "max_latency_s", "policy_version"],
+  "properties": {
+    "layer": { "type": "string", "enum": ["guardian", "twin", "brain"] },
+    "version": { "type": "string", "minLength": 1 },
+    "protocol": { "type": "string", "examples": ["rest+json"] },
+    "optional_faces": { "type": "array", "items": { "type": "string" } },
+    "endpoints": { "type": "object", "description": "Map of logical name -> 'METHOD /path'." },
+    "auth": { "type": "string" },
+    "accepts_sensor_types": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "emits_dispositions": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "max_latency_s": { "type": "number", "exclusiveMinimum": 0 },
+    "policy_version": { "type": "string", "minLength": 1 }
+  }
+}

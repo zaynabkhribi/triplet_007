@@ -1,0 +1,85 @@
+# AEGIS LOOP — Guardian service configuration (canonical v1).
+# RULE (§2.1, §7.4): NO hard-coded partner hosts. Every endpoint is overridable
+# via a GUARDIAN_* environment variable so the same artifact runs on a laptop,
+# in Docker, or on the demo-stage router.
+
+service:
+  name: guardian
+  host: 0.0.0.0
+  port: 8090                  # the port the Twin's mocks point their Guardian at
+  log_level: INFO
+
+# --- Partner endpoints (config, not code) -------------------------------
+partners:
+  twin:
+    base_url: "http://127.0.0.1:8081"   # override: GUARDIAN_TWIN_BASE_URL
+    timeout_s: 2.0
+  brain:
+    base_url: "http://127.0.0.1:8082"   # override: GUARDIAN_BRAIN_BASE_URL
+    timeout_s: 2.0
+
+# --- Auth / integrity ---------------------------------------------------
+# scheme: how inbound requests are authenticated.
+#   verify_signatures  : cryptographic signature check (Stage A4). Shipped FALSE so a
+#                        Phase 2 partner can bring up without our keyring; the check
+#                        itself is asserted by the test suite and running the Test Book
+#                        with GUARDIAN_VERIFY_SIGNATURES=true still passes T5.
+#                        With it off, provenance is honestly scored at 0.5 — unverified
+#                        evidence never earns a perfect provenance factor.
+#   Stage-A identity / provenance / dedup / freshness gates are UNCONDITIONAL;
+#                        there is no knob to switch the trust layer off.
+# keys come from the environment (GUARDIAN_HMAC_KEY) or keys/dev_keys.json;
+# real keys are NEVER committed.
+auth:
+  scheme: "hmac-sha256"          # header: X-Signature over the raw request body
+  verify_signatures: false
+  keyring_path: "keys/dev_keys.json"
+  key_env_var: "GUARDIAN_HMAC_KEY"
+
+# --- Time-to-live / freshness (§3, §6.1) -------------------------------
+ttl:
+  passport_s: 6                  # Evidence Passport lifetime (5-7s band)
+  reading_max_age_s: 7           # readings older than this -> STALE -> RESTRICT
+  seen_window_s: 60              # anti-replay dedup window
+  enforce_freshness: false       # wall-clock age gate. OFF in dev (fixtures are fixed-date);
+                                 # flipped ON for live/integration where phenomenon_time is real.
+                                 # NOTE: the age gate is transport-only; the TTL freshness FACTOR
+                                 # in the trust score is computed separately (plan §6.2, Day 5-6).
+
+# --- Latency contract (§2.9) --------------------------------------------
+latency:
+  design_target_p95_ms: 300      # internal design target
+  contractual_floor_s: 10        # MUST mark untrusted within this (jury checks)
+
+# --- Paths (relative to this file's directory) --------------------------
+paths:
+  audit_log: "logs/audit.jsonl"
+  sensor_profiles: "sensor_profiles.yaml"
+  static_dir: "static"
+
+# --- Live timeline screen (R2) ------------------------------------------
+timeline:
+  poll_interval_ms: 500
+
+# --- Orion broker (the triplet's shared state) ---------------------------
+# The Guardian reads the city's sensor entities from Orion and publishes a
+# per-device verdict feed. The five-stage pipeline is unchanged: this section
+# only configures WHERE frames come from and WHERE verdicts go (orion/orion.py).
+orion:
+  enabled: true
+  base_url: "https://smartopia.polytecsousse.dev/orion-filter/orion-1"   # GUARDIAN_BROKER_URL
+  devices_config: ""           # "" -> shipped orion_devices.json snapshot; a Twin-style
+                               # config.json path overrides it (GUARDIAN_DEVICES_CONFIG)
+  poll_seconds: 5              # one tick = the Twin's 5 s step
+  timeout_s: 10
+  stale_after_s: 20            # ~4 polls without fresh verdicts -> OFFLINE
+
+  # Verdict write-back (INTEGRATION.md: "verdict (format to confirm)").
+  # Entity: id "<device>-verdict", type TrustVerdict, attrs verdict/reason/
+  # trust/zone/checked. Needs the Guardian's own K1/K2 keys, which are never
+  # committed — until keys exist, the /verdicts JSON feed is the delivery path.
+  publish_enabled: false       # GUARDIAN_PUBLISH_VERDICTS=true to arm
+  secrets_path: "guardian_secrets.json"   # gitignored; shape: {"devices": {"<device>-verdict": {"k1": "...", "k2": "..."}}}
+  publish:
+    entity_suffix: "-verdict"
+    entity_type: "TrustVerdict"

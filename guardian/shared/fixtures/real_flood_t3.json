@@ -1,0 +1,129 @@
+{
+  "fixture": "real_flood_t3",
+  "scenario": "T3",
+  "description": "T3 real flood: rising river corroborated by heavy rain. TRUSTED; Brain proposes valve.partial_close within passport.",
+  "ground_truth": {
+    "note": "Twin-internal truth; real flood.",
+    "true_level_m": 1.52
+  },
+  "expected": {
+    "verdict": "TRUSTED",
+    "brain_must": "propose valve.partial_close (reversible)"
+  },
+  "readings": [
+    {
+      "batch_id": "b-t3",
+      "reading_id": "t3-river-1",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:00Z",
+      "result": {
+        "value": 1.4,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 21
+      },
+      "digest": "sha256:cf0873c4ab1606160b0d1d42a6371f54600b377fd50e978114ff896b23d035cc",
+      "signature": "hmac-sha256:7b4d04fbeb2ae2bc4d98dbff2fb2e3c3f696d937c3574887467ce05e2d56b714"
+    },
+    {
+      "batch_id": "b-t3",
+      "reading_id": "t3-rain-1",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:00.500000Z",
+      "result": {
+        "value": 82.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 21
+      },
+      "digest": "sha256:cfd08886fc6883bb317ea9b20738395ca61d59a1ee76315288ab354f34ce0c84",
+      "signature": "hmac-sha256:fea260371c6bda366b017bbd8c7c8e0dcb683f0e2b978268a874c31e07747572"
+    },
+    {
+      "batch_id": "b-t3",
+      "reading_id": "t3-river-2",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:01Z",
+      "result": {
+        "value": 1.55,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 22
+      },
+      "digest": "sha256:4ab4e27929117ff57b1f15a9a5f34a04422ddc6cc38c8112db0fb343989e0213",
+      "signature": "hmac-sha256:8ef31aef67e33c4fbb01415548b6c51570465d6f31b982d20e9024ca83fa3634"
+    },
+    {
+      "batch_id": "b-t3",
+      "reading_id": "t3-rain-2",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:01.500000Z",
+      "result": {
+        "value": 85.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 22
+      },
+      "digest": "sha256:3b60211b9a2ce3baef23b4ed60ba60214e67475dffd86fb7bab2edb8430f404e",
+      "signature": "hmac-sha256:e116f3b96e3318f9446b8a23a5d49bdd37a527851d3b5d20631fbd5c8d3e2d56"
+    },
+    {
+      "batch_id": "b-t3",
+      "reading_id": "t3-river-3",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-11-07T10:00:02Z",
+      "result": {
+        "value": 1.52,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 23
+      },
+      "digest": "sha256:715a5ba6bd71dc3356cc2f32b64d6f115ff7407d9b6e4951de6ee25d960de0c5",
+      "signature": "hmac-sha256:a67d933092eb74c2a72ee3fd27d8ff65a00e1ba28b4e015aae1547a33719efe2"
+    },
+    {
+      "batch_id": "b-t3",
+      "reading_id": "t3-rain-3",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-11-07T10:00:02.500000Z",
+      "result": {
+        "value": 80.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 23
+      },
+      "digest": "sha256:81ca6901e56df77f5751645646a93f118b53dce1ecf26b833466cffa40e64a67",
+      "signature": "hmac-sha256:4b358671d591f50f1d7ef6f84868fd9877b71658959dfba4b311a148d849349c"
+    }
+  ]
+}

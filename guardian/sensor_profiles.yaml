@@ -1,0 +1,162 @@
+# AEGIS LOOP — Source-agnostic sensor profiles (§6.4).
+# The Guardian is driven by DATA, not code: adding a new sensor type = add a
+# profile here, no code change. This satisfies BOTH the official Phase 1 required
+# sensors (traffic_camera, water_level, power_load, air_quality, emergency_call)
+# AND the Guardian inter-SB guide's richer set (fire_smoke, gps, rain, flow).
+#
+# Each profile declares: unit, physical/enum range, max rate per tick,
+# independent corroborators, and a short physics note used by detectors.
+
+profiles:
+
+  water_level:            # OFFICIAL REQUIRED
+    unit: m
+    range: { min: 0.0, max: 6.0 }
+    max_rate_per_tick: 0.5
+    corroborators: [rain, flow, traffic_camera]
+    physics: "Rises with sustained rain over the catchment; bounded by the flood model."
+
+  rain:                   # corroboration source
+    unit: mm
+    range: { min: 0.0, max: 200.0 }
+    max_rate_per_tick: 20.0
+    corroborators: [water_level, flow]
+    physics: "Non-negative; heavy rain implies rising water_level and flow."
+
+  flow:                   # corroboration source (pump/valve effect)
+    unit: m3_s
+    range: { min: 0.0, max: 500.0 }
+    max_rate_per_tick: 50.0
+    corroborators: [water_level, rain]
+    physics: "Changes when a valve/pump acts; flat flow during an APPLIED pump => Witness MISMATCH."
+
+  air_quality:            # OFFICIAL REQUIRED
+    unit: aqi
+    range: { min: 0, max: 500 }
+    max_rate_per_tick: 60
+    corroborators: [fire_smoke, traffic_camera]
+    physics: "AQI spikes with smoke/industrial events; bounded 0-500."
+
+  fire_smoke:             # corroboration source
+    unit: ppm                # Twin threshold: warn 10, critical 100
+    range: { min: 0, max: 600 }
+    max_rate_per_tick: 120
+    corroborators: [temperature, air_quality]
+    physics: "Smoke rises with fire; heat must rise with it. Smoke without heat is the g1 spoof."
+
+  temperature:            # corroboration source (building fire)
+    unit: C                  # Twin threshold: warn 38, critical 60
+    range: { min: -10.0, max: 320.0 }
+    max_rate_per_tick: 15.0
+    corroborators: [fire_smoke, air_quality]
+    physics: "A real fire raises smoke AND heat together; heat without smoke, or smoke without heat, is the spoof signature. The Twin's fire ramps +12 C/tick and can reach ~300 C, so the range is honest about a long burn."
+
+  power_load:             # OFFICIAL REQUIRED
+    unit: mw
+    range: { min: 0.0, max: 1200.0 }
+    max_rate_per_tick: 120.0
+    corroborators: [air_quality, traffic_camera]
+    physics: "Grid load; large steps only on switching events."
+
+  traffic_camera:         # OFFICIAL REQUIRED
+    unit: count
+    range: { min: 0, max: 500 }
+    max_rate_per_tick: 200
+    corroborators: [power_load, air_quality, gps]
+    physics: "Vehicle count; corroborates congestion seen by GPS."
+
+  gps:                    # corroboration source (fleet)
+    unit: deg
+    # Readings carry a scalar `deg` value, so the range must be scalar too: a nested
+    # {lat:{...},lon:{...}} block was silently un-range-checkable. Bounds are the
+    # union of latitude/longitude; the tight per-axis bound is not expressible for a
+    # scalar frame and is a documented §8 simplification.
+    range: { min: -180, max: 180 }
+    max_rate_per_tick: 0.005       # ~500 m
+    max_speed_kmh: 180             # urban implausibility ceiling
+    corroborators: [traffic_camera]
+    physics: "Vehicle track in degrees; >500 m/tick or >180 km/h urban or 180 deg heading flip => SPOOF."
+
+  congestion:             # triplet_07 zone A (NGSI congestionLevel, %)
+    unit: "%"
+    range: { min: 0, max: 100 }
+    max_rate_per_tick: 25
+    corroborators: [traffic_camera, vehicle_speed]
+    physics: "Congestion percent. Twin thresholds: warning 50, critical 75. A real jam ramps (~10%/tick); a jump > 25% in one tick is the fake-jam spike."
+    # A live road wanders by a couple of percent every tick, so five identical
+    # reads in a row is the Twin's stuck-sensor signature (scenario g2). Opting
+    # in is per profile: quantized counters that legitimately repeat do not opt in.
+    jam: { repeat_ticks: 5 }
+    # D11 steady rule — the triplet's g3 fake jam: a value pinned >= min_value for
+    # 6 equal-band reads (the mock Guardian's own rule) that NO independent device
+    # in the zone corroborates. `span` absorbs the Twin's +/-2 generator noise, so
+    # a real ceiling jam with an independent witness (a1) stays trusted.
+    # `corroborate` is DIRECTIONAL: a sibling supports the high-congestion claim
+    # with its camera count high OR its speed low (speed is the inverted cousin
+    # of congestion — a cousin claiming the same story agrees through the inverse
+    # quantity, which is exactly what a lying generator cannot fake for everyone).
+    steady:
+      ticks: 5
+      span: 6.0
+      min_value: 80.0
+      corroborate:
+        traffic_camera: { op: ">=", value: 40 }   # many vehicles on a jammed road
+        vehicle_speed:  { op: "<=", value: 20 }   # and/or slowed traffic credible
+
+  vehicle_speed:          # triplet_07 zone A (NGSI avgSpeed, km/h)
+    unit: km/h
+    range: { min: 0, max: 120 }
+    max_rate_per_tick: 30
+    corroborators: [congestion, traffic_camera]
+    physics: "Inverted cousin of congestion: a real jam lowers speed gradually, never 0 -> 50 km/h in one tick."
+    jam: { repeat_ticks: 5 }     # same stuck-sensor rule as congestion (g2 repeats the whole payload)
+
+  building_occupancy:     # triplet_07 zone B (NGSI occupancyCount, people)
+    unit: people
+    range: { min: 0, max: 500 }
+    max_rate_per_tick: 10
+    corroborators: []
+    # Resting states are legitimate physics, not faults: the twin's evacuation
+    # walks occupancy down to 0 and it STAYS there while the scene is hot (b1),
+    # and an empty building rests at 0 forever. Freezes at those levels must
+    # not read as stuck-sensor freezes (D7 stays significant elsewhere).
+    jam: { significant: false }
+    physics: "People inside the building; drops ~3/tick during an evacuation and rests at 0 until the incident clears. Nothing else measures it: single-source, range+rate only."
+
+  camera_alert:           # triplet_07 zone C (NGSI dumpingDetected, boolean 0/1)
+    unit: state
+    range: { min: 0, max: 1 }
+    max_rate_per_tick: 1.0
+    corroborators: [camera_confidence]
+    # A camera at rest reports the same 0 forever, and one filming a dump
+    # reports the same 1 while the event lasts. Freezes are the camera's
+    # normal; a lie would be a 1 with no corroborating confidence (the
+    # corroborator check covers that). D7 stays significant elsewhere.
+    jam: { significant: false }
+    physics: "The camera's own alert flag; flips 0->1 the tick dumping is seen, with confidence rising with it."
+
+  camera_confidence:      # triplet_07 zone C (NGSI confidence, 0-1)
+    unit: "0-1"
+    range: { min: 0, max: 1 }
+    max_rate_per_tick: 1.0
+    corroborators: [camera_alert]
+    jam: { significant: false }     # rests at 0 between events (see camera_alert)
+    physics: "The camera's confidence in its alert; stays 0 when idle. Alone it says nothing; with camera_alert=1 it substantiates the dump event."
+
+  fill_level:             # triplet_07 zone C (NGSI fillLevel, %)
+    unit: "%"
+    range: { min: 0, max: 100 }
+    max_rate_per_tick: 30            # the "full" scenario fills +15%/tick: coupled to the bin, not an attack
+    corroborators: []      # nothing else measures fill; rate + range are the check
+    # A full bin STAYS full: the twin caps the report at 97% (c1) and a capped
+    # value freezes by definition. D7 (freeze-after-movement) is disabled here;
+    # the empty-round drop 70 -> 5 is rate-checked instead.
+    jam: { significant: false }
+    physics: "Bin fill percent. Twin thresholds: warning 80, critical 95. A rising fill is the incident, not an attack; a capped fill is the bin being full, not a stuck sensor."
+
+  emergency_call:         # OFFICIAL REQUIRED
+    unit: count
+    range: { min: 0, max: 200 }
+    max_rate_per_tick: 50
+    corroborators: [traffic_camera]
+    physics: "Incident call volume; corroborated by camera congestion."

@@ -1,0 +1,75 @@
+{
+  "fixture": "spoof_gps_t6",
+  "scenario": "T6",
+  "description": "T6 teleporting fleet GPS (-179 to +179 deg in one tick). SPOOF -> MALICIOUS; Brain must ignore and use camera instead.",
+  "ground_truth": {
+    "note": "Twin-internal truth; vehicle never moved.",
+    "true_position_deg": 0.0
+  },
+  "expected": {
+    "verdict": "MALICIOUS",
+    "reason_must_include": [
+      "SPOOF"
+    ],
+    "brain_must": "refuse; alternative source or human confirm"
+  },
+  "readings": [
+    {
+      "batch_id": "b-t6",
+      "reading_id": "t6-cam-1",
+      "sensor_id": "traffic-cam-1",
+      "zone": "Z-CENTRAL_JUNCTION",
+      "observed_property": "traffic_camera",
+      "phenomenon_time": "2026-11-07T10:00:00Z",
+      "result": {
+        "value": 60,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "2.1",
+        "cal": "CAL-11",
+        "seq": 41
+      },
+      "digest": "sha256:6b96f834e2c01c35ddc0f6e6c4d10bb93d1fa484ff3ff0c580480bf9a50be1b4",
+      "signature": "hmac-sha256:a1b4432ab2a328b04b5ad444b0f27d3b07c9a21b4ecd24fcb069ddea64d18155"
+    },
+    {
+      "batch_id": "b-t6",
+      "reading_id": "t6-gps-1",
+      "sensor_id": "fleet-gps-1",
+      "zone": "Z-FLEET",
+      "observed_property": "gps",
+      "phenomenon_time": "2026-11-07T10:00:00.500000Z",
+      "result": {
+        "value": -179.0,
+        "unit": "deg"
+      },
+      "provenance": {
+        "firmware": "2.0",
+        "cal": "CAL-12",
+        "seq": 41
+      },
+      "digest": "sha256:dd879adf6c59a86436391222751fb5ab4e760582e08130d72b7dca4dfe55c23f",
+      "signature": "hmac-sha256:1b4230d5afafe03f4f886959a32aec16d0adad55e79a2c86ed9c289c25dbf461"
+    },
+    {
+      "batch_id": "b-t6",
+      "reading_id": "t6-gps-2",
+      "sensor_id": "fleet-gps-1",
+      "zone": "Z-FLEET",
+      "observed_property": "gps",
+      "phenomenon_time": "2026-11-07T10:00:01Z",
+      "result": {
+        "value": 179.0,
+        "unit": "deg"
+      },
+      "provenance": {
+        "firmware": "2.0",
+        "cal": "CAL-12",
+        "seq": 42
+      },
+      "digest": "sha256:507b316c0a2e906fb28eaaa9adab180d555961eaf1c2272fc94ef0f2419f5312",
+      "signature": "hmac-sha256:d36bd3a7429405287871a15f5331934da624a6d22350e0245282b207953bb8b8"
+    }
+  ]
+}

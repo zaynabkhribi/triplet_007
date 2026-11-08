@@ -1,0 +1,160 @@
+{
+  "fixture": "drift_attack",
+  "description": "S1 flagship: river-gauge-1 drifts +6cm/tick reporting falsely low while rain-gauge-2 reports heavy flood rain (contradiction).",
+  "scenario": "S1",
+  "expected_verdict": "SUSPECT",
+  "readings": [
+    {
+      "batch_id": "b-s1-drift",
+      "reading_id": "s1-river-gauge-1-0",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-10-20T10:03:10.000Z",
+      "result": {
+        "value": 0.3,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 1
+      },
+      "digest": "sha256:32d8363b0c5046d53d63b61281cb34af3f3f55700374f57cf9e1776b048391fc",
+      "signature": "hmac-sha256:3982d15291efd38ccf043a851f6c301c3299bb7b48e7ed8a8a4ce332fd2f78e1"
+    },
+    {
+      "batch_id": "b-s1-drift",
+      "reading_id": "s1-rain-gauge-2-0",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-10-20T10:03:10.000Z",
+      "result": {
+        "value": 78.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 1
+      },
+      "digest": "sha256:853a967e40674caf2fb538c96202eb5d32485c24c1eff1286ef71b058a6da89f",
+      "signature": "hmac-sha256:4a7d33e83f74e12dba81db6e87ef99d1230155afcccb29ad86d1a41db96d4ca3"
+    },
+    {
+      "batch_id": "b-s1-drift",
+      "reading_id": "s1-river-gauge-1-1",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-10-20T10:03:11.000Z",
+      "result": {
+        "value": 0.36,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 2
+      },
+      "digest": "sha256:ec20029b993a32317513513e2c81f02a4fab3dca6334c9f4d35c354a0da0dd33",
+      "signature": "hmac-sha256:2727217fd3ec7cfe207f483e3029b54308a08aa5d7efbd126f07562440e57a91"
+    },
+    {
+      "batch_id": "b-s1-drift",
+      "reading_id": "s1-rain-gauge-2-1",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-10-20T10:03:11.000Z",
+      "result": {
+        "value": 82.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 2
+      },
+      "digest": "sha256:a8a6ce5dd1345c172e9edda495213cf680cc047824970c6bf85a0368c4ab5707",
+      "signature": "hmac-sha256:b50f7ce6ec3752d51436756b8048151a1cb2d7cb296fecf0f77babebbc974a16"
+    },
+    {
+      "batch_id": "b-s1-drift",
+      "reading_id": "s1-river-gauge-1-2",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-10-20T10:03:12.000Z",
+      "result": {
+        "value": 0.42,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 3
+      },
+      "digest": "sha256:453a38ec72d364ced9c71819107932aef980e2231baf928e694808962f051c2b",
+      "signature": "hmac-sha256:8e7627a9bcc369f7f800c04830358d70f82ffa7c877c185f4330b1cff0a88afd"
+    },
+    {
+      "batch_id": "b-s1-drift",
+      "reading_id": "s1-rain-gauge-2-2",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-10-20T10:03:12.000Z",
+      "result": {
+        "value": 79.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 3
+      },
+      "digest": "sha256:0d720082dbbaa9ef66ee140394e21b3a0046f31d14a6dbdc1e1d16c44fd743ed",
+      "signature": "hmac-sha256:94e00b59d84df4cd53d0da59c7a973629a6810fff8e920c25e084223895fba5d"
+    },
+    {
+      "batch_id": "b-s1-drift",
+      "reading_id": "s1-river-gauge-1-3",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-10-20T10:03:13.000Z",
+      "result": {
+        "value": 0.48,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 4
+      },
+      "digest": "sha256:e0393b8399798a0034f77dcfd6f582e3aa731eb48b522def44976edb46a7fad2",
+      "signature": "hmac-sha256:ec20c08bc3f5b415be959f85fd541396c3d3bea5a6981336a8c51e4df3f2edfb"
+    },
+    {
+      "batch_id": "b-s1-drift",
+      "reading_id": "s1-rain-gauge-2-3",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-10-20T10:03:13.000Z",
+      "result": {
+        "value": 80.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.2",
+        "cal": "CAL-03",
+        "seq": 4
+      },
+      "digest": "sha256:3d88b3c6ab12f4e4ac2b15ff7541293347fcd41bb0c7cf7be549192ed382abe8",
+      "signature": "hmac-sha256:0915eaaed79c4f2f99438400fa42d4b79c4cce45c99855501b40f697e8e007f9"
+    }
+  ]
+}

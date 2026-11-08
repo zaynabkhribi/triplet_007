@@ -1,0 +1,11 @@
+# AEGIS LOOP — Guardian dependencies (Python 3.9+).
+# Kept minimal and dependency-light so it cannot break on the demo stage.
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+jsonschema>=4.21
+PyYAML>=6.0
+httpx>=0.27        # broker reads, Orion client, and the test client
+pytest>=8.0
+ruff>=0.5          # `make lint` static check (falls back to byte-compile if absent)
+# cryptography>=42.0   # Ed25519 public-key signing option (HMAC-SHA256 is the default)

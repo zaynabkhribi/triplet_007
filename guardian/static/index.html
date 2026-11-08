@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AEGIS LOOP — Guardian Live Timeline</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26' fill='%2358a6ff'%3E%E2%97%88%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/ui/style.css" />
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span class="logo">◈</span>
+      <div>
+        <h1>AEGIS LOOP · Guardian Live Timeline</h1>
+        <div class="sub">reading → Guardian verdict → Brain decision → Twin action → Witness</div>
+      </div>
+    </div>
+    <div class="status">
+      <span id="mode" class="badge mock">LOCAL-MOCK</span>
+      <span id="policy" class="badge">policy v1.0</span>
+      <span id="conn" class="badge">● connecting…</span>
+    </div>
+  </header>
+
+  <section class="meta">
+    <span>events: <b id="count">0</b></span>
+    <span>accepted: <b id="accepted">0</b></span>
+    <span>rejected: <b id="rejected">0</b></span>
+    <span>refused: <b id="refused">0</b></span>
+    <span>last update: <b id="updated">—</b></span>
+    <button id="clear">clear view</button>
+    <a class="btn" href="/describe" target="_blank">/describe</a>
+    <a class="btn" href="/docs" target="_blank">API docs</a>
+  </section>
+
+  <main class="lanes">
+    <div class="lane" data-lane="twin">
+      <h2>Twin <span class="hint">readings / actions</span></h2>
+      <div class="col" id="lane-twin"></div>
+    </div>
+    <div class="lane" data-lane="guardian">
+      <h2>Guardian <span class="hint">verdicts / passports</span></h2>
+      <div class="col" id="lane-guardian"></div>
+    </div>
+    <div class="lane" data-lane="brain">
+      <h2>Brain <span class="hint">decisions</span></h2>
+      <div class="col" id="lane-brain"></div>
+    </div>
+    <div class="lane" data-lane="witness">
+      <h2>Witness <span class="hint">observed effect</span></h2>
+      <div class="col" id="lane-witness"></div>
+    </div>
+  </main>
+
+  <footer>
+    <span>Every action carries its own proof — reading → signed verdict (Evidence Passport) → bounded decision → action → observed effect.</span>
+    <span class="legend"><i class="sw ok"></i>trusted <i class="sw warn"></i>suspect / refused <i class="sw bad"></i>malicious / mismatch</span>
+  </footer>
+
+  <script src="/ui/timeline.js"></script>
+</body>
+</html>

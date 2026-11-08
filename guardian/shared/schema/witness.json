@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegis-loop.tsyp14/schema/witness.json",
+  "title": "Effect Witness",
+  "description": "Twin -> Guardian. Independent observation of an action's real effect. requested vs acknowledged vs observed; a MISMATCH means the actuator lied (or failed) -> Guardian decays history / quarantines the implicated device.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action_id", "requested", "acknowledged", "result"],
+  "properties": {
+    "action_id": { "type": "string", "minLength": 1 },
+    "requested": { "type": "string", "minLength": 1, "description": "Action the Brain requested." },
+    "acknowledged": { "type": "string", "minLength": 1, "description": "What the actuator reported, e.g. applied / denied / timeout." },
+    "observed": {
+      "type": "object",
+      "description": "Independently sensed post-state, e.g. { flow_sensor: 'flat' }."
+    },
+    "result": { "type": "string", "enum": ["CONFIRMED", "MISMATCH", "TIMEOUT", "DENIED"] },
+    "implicated_device": { "type": "string", "description": "Device to decay/quarantine on MISMATCH." }
+  }
+}

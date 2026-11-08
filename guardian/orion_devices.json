@@ -1,0 +1,20 @@
+{
+  "_comment": "Snapshot of the triplet's root device list. Data, not code: normally read live from a real orion deployment via GUARDIAN_DEVICES_CONFIG. Snapshot taken of twin/config.json's list of devices so the Guardian runs standalone without duplication.",
+  "snapshot_of": "twin/config.json (triplet_007, rev 0fccd6b)",
+  "devices": {
+    "us-a-traf-01": {"kind": "traffic", "type": "TrafficSensor"},
+    "us-a-traf-02": {"kind": "traffic", "type": "TrafficSensor"},
+    "us-a-traf-03": {"kind": "traffic", "type": "TrafficSensor"},
+    "us-a-light-01": {"kind": "light", "type": "TrafficLight"},
+    "us-a-light-03": {"kind": "light", "type": "TrafficLight"},
+    "us-a-sign-01": {"kind": "sign", "type": "EmergencyDispatch"},
+    "us-b-bldg-01": {"kind": "building", "type": "BuildingSensor"},
+    "us-b-alarm-01": {"kind": "alarm", "type": "FireAlarm"},
+    "us-b-disp-01": {"kind": "dispatch", "type": "EmergencyDispatch"},
+    "us-c-cam-01": {"kind": "camera", "type": "IPCamera"},
+    "us-c-bin-01": {"kind": "bin", "type": "WasteBin"},
+    "us-c-bin-02": {"kind": "bin", "type": "WasteBin"},
+    "us-c-task-01": {"kind": "task", "type": "CleaningTask"},
+    "us-ops-center": {"kind": "ops", "type": "OperationsCenter"}
+  }
+}

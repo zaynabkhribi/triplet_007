@@ -28,6 +28,28 @@ services:
   #   restart: unless-stopped
   #   depends_on: [twin, guardian]
 
+  # Guardian layer: reads the city's sensors from Orion, publishes one verdict per
+  # device on http://localhost:8090/verdicts. It talks to the broker only — never to
+  # the Twin or the Brain directly — so it can start before or after either of them.
+  guardian:
+    build: ./guardian
+    image: triplet-07-guardian
+    restart: unless-stopped
+    ports:
+      - "8090:8090"                       # GET /verdicts, /orion/status, /ui/
+    environment:
+      GUARDIAN_ORION_ENABLED: "true"
+      GUARDIAN_BROKER_URL: ${GUARDIAN_BROKER_URL:-https://smartopia.polytecsousse.dev/orion-filter/orion-1}
+      GUARDIAN_POLL_SECONDS: "5"          # one tick = the Twin's 5 s step
+      # Write TrustVerdict entities back into Orion. Needs the Guardian's own
+      # K1/K2 file (guardian/guardian_secrets.json, gitignored). Off by default:
+      # the /verdicts feed already serves both the Twin and the Brain, so the
+      # triplet runs end to end with no secret in the repo at all.
+      GUARDIAN_PUBLISH_VERDICTS: ${GUARDIAN_PUBLISH_VERDICTS:-false}
+    # To arm write-back, uncomment once guardian/guardian_secrets.json exists:
+    # volumes:
+    #   - ./guardian/guardian_secrets.json:/app/guardian_secrets.json:ro
+
   # Test setup without the platform: fake broker, Twin, mock Guardian and mock Brain in one container.
   mock-city:
     build: ./twin

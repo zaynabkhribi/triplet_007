@@ -1,0 +1,120 @@
+{
+  "fixture": "golden_clean",
+  "description": "Healthy baseline: one reading per official sensor type. All devices are known and well-provenanced; all should be ACCEPTED (verdict engine lands Week 1 Day 5-6).",
+  "readings": [
+    {
+      "batch_id": "b-042",
+      "reading_id": "r-001",
+      "sensor_id": "river-gauge-1",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "water_level",
+      "phenomenon_time": "2026-10-20T10:03:11.000Z",
+      "result": {
+        "value": 0.82,
+        "unit": "m"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 100
+      },
+      "digest": "sha256:2395d552c1703f95775889ab0bb3057aa12057cb65fd8220169423c2599f736d",
+      "signature": "dev:unsigned"
+    },
+    {
+      "batch_id": "b-042",
+      "reading_id": "r-002",
+      "sensor_id": "rain-gauge-2",
+      "zone": "Z-RIVER_UNDERPASS",
+      "observed_property": "rain",
+      "phenomenon_time": "2026-10-20T10:03:11.000Z",
+      "result": {
+        "value": 4.0,
+        "unit": "mm"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 101
+      },
+      "digest": "sha256:ca98dbbbbcd2643b7024dadd19e16d83f3e4ad0b5d7bd5d0d211ef1436e611c3",
+      "signature": "dev:unsigned"
+    },
+    {
+      "batch_id": "b-042",
+      "reading_id": "r-003",
+      "sensor_id": "traffic-cam-1",
+      "zone": "Z-CENTRAL_JUNCTION",
+      "observed_property": "traffic_camera",
+      "phenomenon_time": "2026-10-20T10:03:11.000Z",
+      "result": {
+        "value": 37,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 102
+      },
+      "digest": "sha256:9928812404e4b20a54a0ccd8a764e79923bcfa0aed047a872b4bf37aad1b3991",
+      "signature": "dev:unsigned"
+    },
+    {
+      "batch_id": "b-042",
+      "reading_id": "r-004",
+      "sensor_id": "aqi-stack-1",
+      "zone": "Z-INDUSTRIAL",
+      "observed_property": "air_quality",
+      "phenomenon_time": "2026-10-20T10:03:11.000Z",
+      "result": {
+        "value": 62,
+        "unit": "aqi"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 103
+      },
+      "digest": "sha256:76a2a9a881e8ecd66c8eda6be8a4f53b42ae0bf5340c7b513a9f270877af7690",
+      "signature": "dev:unsigned"
+    },
+    {
+      "batch_id": "b-042",
+      "reading_id": "r-005",
+      "sensor_id": "power-meter-1",
+      "zone": "Z-INDUSTRIAL",
+      "observed_property": "power_load",
+      "phenomenon_time": "2026-10-20T10:03:11.000Z",
+      "result": {
+        "value": 310.5,
+        "unit": "mw"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 104
+      },
+      "digest": "sha256:15cfb52f73bd08cd77fa4d7e7689bf2cc17ba13d20511a3221ecfab8a13fdd98",
+      "signature": "dev:unsigned"
+    },
+    {
+      "batch_id": "b-042",
+      "reading_id": "r-006",
+      "sensor_id": "ecall-feed-1",
+      "zone": "Z-HOSPITAL",
+      "observed_property": "emergency_call",
+      "phenomenon_time": "2026-10-20T10:03:11.000Z",
+      "result": {
+        "value": 2,
+        "unit": "count"
+      },
+      "provenance": {
+        "firmware": "1.4",
+        "cal": "CAL-07",
+        "seq": 105
+      },
+      "digest": "sha256:01090bed830d413cbdd553a3163879c4dffef7c67be3d472b9b9de71d8fe4551",
+      "signature": "dev:unsigned"
+    }
+  ]
+}
