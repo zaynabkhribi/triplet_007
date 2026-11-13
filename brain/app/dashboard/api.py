@@ -224,12 +224,54 @@ def snapshot(request: Request) -> dict:
             if row.payload["event"]["action"] == "quarantine"
             and quarantined(session, row.target_type, row.target_id)
         ]
+        # Task 7.3F-1: expose the audit-tail reconciliation state honestly.
+        # The durable cursor (highest accounted audit seq) and the pending
+        # store are Brain-owned state files of the Real-Readonly worker; a
+        # lower pending count means more evidence was exactly matched.
+        audit_verified = pending_count = None
+        cursor_path = pending_path = None
+        if getattr(request.app.state.settings, "guardian_evidence_source", "") == "audit_tail":
+            from app.integration.guardian_compat import (
+                audit_cursor_path,
+                audit_pending_path,
+            )
+
+            try:
+                cursor_path = audit_cursor_path(request.app.state.settings)
+                pending_path = audit_pending_path(request.app.state.settings)
+                from app.integration.guardian_compat import AuditCursor, PendingEvidenceStore
+
+                audit_cursor = AuditCursor(cursor_path)
+                audit_verified = audit_cursor.load()
+                pending_count = len(PendingEvidenceStore(pending_path).load())
+            except Exception:  # noqa: BLE001 - dashboard must not fail on state files
+                audit_verified = pending_count = None
+        # Task 7.3F-2: raw observation layer - latest STORED reading per
+        # sensor, independent of trust eligibility. Readings are ordered
+        # newest-first, so the first occurrence of each sensor_id is its
+        # latest raw observation. The frontend labels this as raw/untrusted,
+        # distinct from the trusted fused city state.
+        raw_latest: dict[str, dict] = {}
+        for event, _ in readings:
+            if event.sensor_id in raw_latest:
+                continue
+            raw_latest[event.sensor_id] = {
+                "value": event.payload["event"]["value"],
+                "unit": event.payload["event"]["unit"],
+                "at": utc(event.occurred_at).isoformat(),
+            }
         return {
             "generated_at": datetime.now(UTC).isoformat(),
             "health": {"database": "ready"},
             "environment": "mock-development"
             if request.app.state.settings.operational_demo_enabled
             else request.app.state.settings.environment,
+            "evidence_mode": "audit_tail_reconciliation"
+            if getattr(request.app.state.settings, "guardian_evidence_source", "")
+            == "audit_tail"
+            else "guardian_verdicts",
+            "audit_verified_matches": audit_verified,
+            "audit_pending": pending_count,
             "metrics": {
                 "incoming_events_per_second": round((incoming_recent or 0) / 10, 2),
                 "processed_observations": processed or 0,
@@ -280,6 +322,7 @@ def snapshot(request: Request) -> dict:
                 for event, lifecycle in readings
             ],
             "verdicts": [row.payload["event"] for row in verdicts],
+            "raw_latest": raw_latest,
             "security_alerts": security,
         }
 async def provider_status(request: Request) -> dict:
@@ -289,23 +332,93 @@ async def provider_status(request: Request) -> dict:
         if settings.brain_api_key
         else {}
     )
-    async with httpx.AsyncClient(timeout=2, trust_env=False) as client:
-        async def get(url: object, path: str, protected: bool = False) -> dict:
-            if not url:
-                return {"connected": False, "reason": "not_configured"}
+
+    async def guardian_health(client: httpx.AsyncClient) -> dict:
+        """Real Guardian exposes GET /healthz (no auth); probe that.
+
+        The old code called /health (the mock Guardian route), so the real
+        layer always showed 'offline'. Try /healthz first, fall back.
+        """
+        base = settings.guardian_base_url
+        if not base:
+            return {"connected": False, "reason": "not_configured"}
+        for path in ("/healthz", "/health"):
             try:
                 response = await client.get(
-                    str(url).rstrip("/") + path,
-                    headers=headers if protected else {},
+                    str(base).rstrip("/") + path,
+                    headers=headers if path == "/health" else {},
                 )
                 response.raise_for_status()
                 return {"connected": True, **response.json()}
             except (httpx.HTTPError, ValueError):
-                return {"connected": False, "reason": "unavailable"}
+                continue
+        return {"connected": False, "reason": "unavailable"}
 
+    async def twin_publish_state(client: httpx.AsyncClient) -> dict:
+        """Infer Remote Twin publisher activity from Orion entity freshness.
+
+        There is no Twin process of ours to poll in the Real-Readonly
+        profile (TWIN_BASE_URL unset): the publisher is the partner's
+        hosted Twin. The honest liveness signal is whether the monitored
+        entity's timestamp is advancing (<= 120 s old).
+        """
+        base = settings.orion_base_url
+        devices = getattr(settings, "snap4city_devices_file", None)
+        if not base or not devices:
+            return {"connected": False, "reason": "not_configured"}
+        entity_id = "us-b-bldg-01"
+        try:
+            from app.integration.ngsi_twin import load_mapping
+
+            mapping = load_mapping(devices).sensors
+            entity_id = mapping[0].entity_id if mapping else entity_id
+        except Exception:  # noqa: BLE001 - fall back to the default entity
+            pass
+        try:
+            response = await client.get(
+                str(base).rstrip("/") + f"/v2/entities/{entity_id}",
+                params={"type": "BuildingSensor", "elementid": entity_id},
+            )
+            response.raise_for_status()
+            entity = response.json()
+        except (httpx.HTTPError, ValueError):
+            return {"connected": False, "reason": "orion_unreachable"}
+        # 7.3F-2 root cause: NGSI entities carry attributes as nested
+        # {type, value} dicts. Reading `entity["timestamp"]` raw returned a
+        # dict, which failed the string check, so age was never computed and
+        # the publisher was ALWAYS reported stale. Flatten first (same
+        # canonicalization as the ingest poller and the check script).
+        stamp = entity.get("timestamp")
+        if isinstance(stamp, dict) and "value" in stamp:
+            stamp = stamp["value"]
+        values = {
+            k: v.get("value") if isinstance(v, dict) and "value" in v else v
+            for k, v in entity.items()
+            if k not in ("id", "type")
+        }
+        age_s = None
+        running = False
+        if isinstance(stamp, str) and stamp.strip():
+            try:
+                ts = datetime.fromisoformat(stamp.strip().replace("Z", "+00:00"))
+                if ts.tzinfo is None:
+                    ts = ts.replace(tzinfo=UTC)
+                age_s = max(0.0, (datetime.now(UTC) - ts).total_seconds())
+                running = age_s <= 120
+            except ValueError:
+                pass
+        return {
+            "connected": True,
+            "running": running,
+            "publisher": "hosted-partner-twin",
+            "last_publish_age_s": round(age_s, 1) if age_s is not None else None,
+            "last_timestamp": stamp,
+            "values": values,
+        }
+
+    async with httpx.AsyncClient(timeout=4, trust_env=False) as client:
         twin, guardian = await asyncio.gather(
-            get(settings.twin_base_url, "/operations", True),
-            get(settings.guardian_base_url, "/health"),
+            twin_publish_state(client), guardian_health(client)
         )
     return {
         "brain": {"connected": True, "processing": settings.worker_enabled},

@@ -1,0 +1,35 @@
+# Real-Readonly ingestion allowlist (Task 7.3D-3A-R).
+#
+# Dedicated Snap4City device mapping for the read-only Real-Integration
+# deployment. Restricted to the only channels that satisfy BOTH the Brain
+# registry schema (app/state/registry.py: strict measurement Literal with
+# per-measurement unit sets) and the Guardian contract (guardian/ngsi.yaml):
+#
+#   smokeLevel     -> fire_smoke   / ppm / ZONE-B   (registry: smoke/ppm)
+#   temperature    -> temperature  / C   / ZONE-B   (registry: temperature/degC)
+#
+# Deliberately excluded from this profile (kept available in the broader
+# devices.snap4city.example.yaml for future channel integration):
+#   * congestionLevel ("%" is not a legal `traffic` unit in the registry)
+#   * fillLevel       ("fill" is not a registry measurement)
+#   * vehicleCount/occupancy (ambiguous Guardian traffic_camera channel)
+version: 1
+sensors:
+  - entity_id: us-b-bldg-01
+    ngsi_type: BuildingSensor
+    attribute: smokeLevel
+    sensor_id: us-b-bldg-01:fire_smoke
+    measurement: smoke
+    unit: ppm
+    guardian_zone: ZONE-B
+    guardian_property: fire_smoke
+    guardian_unit: ppm
+  - entity_id: us-b-bldg-01
+    ngsi_type: BuildingSensor
+    attribute: temperature
+    sensor_id: us-b-bldg-01:temperature
+    measurement: temperature
+    unit: degC
+    guardian_zone: ZONE-B
+    guardian_property: temperature
+    guardian_unit: C

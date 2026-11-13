@@ -1,0 +1,57 @@
+# Snap4City Orion read-side allowlist (Brain-owned data, not code).
+# Only these entity/attribute pairs are polled and translated into Brain
+# observations. Anything else on the broker is ignored, never guessed.
+#
+# Copy to devices.snap4city.yaml, adjust sensor_ids to the city registry, and
+# set SNAP4CITY_INGEST_ENABLED=true + SNAP4CITY_DEVICES_FILE=<path>.
+#
+# guardian_* fields are the REAL Guardian's wire vocabulary, copied verbatim
+# from guardian/ngsi.yaml and guardian/src/guardian/ngsi.py::zone_for().
+# They are used ONLY to verify evidence digests byte-for-byte — they never
+# authorize anything. Channels whose Guardian property collides with another
+# channel on the same entity (e.g. vehicleCount and occupancy both mapping to
+# traffic_camera) MUST be omitted: the mapping validator rejects ambiguous
+# guardian_property pairs outright.
+version: 1
+sensors:
+  # Zone B — building fire (us-b-bldg-01)
+  - entity_id: us-b-bldg-01
+    ngsi_type: BuildingSensor
+    attribute: smokeLevel
+    sensor_id: us-b-bldg-01:fire_smoke
+    measurement: smoke
+    unit: ppm
+    guardian_zone: ZONE-B
+    guardian_property: fire_smoke
+    guardian_unit: ppm
+  - entity_id: us-b-bldg-01
+    ngsi_type: BuildingSensor
+    attribute: temperature
+    sensor_id: us-b-bldg-01:temperature
+    measurement: temperature
+    unit: degC
+    guardian_zone: ZONE-B
+    guardian_property: temperature
+    guardian_unit: C        # Guardian's spelling; Brain keeps degC
+  # Zone A — traffic (us-a-traf-01..03). Only congestionLevel is allowlisted:
+  # vehicleCount and occupancy collapse to Guardian's traffic_camera and are
+  # therefore ambiguous (see Phase 4) and unsupported for trust matching.
+  - entity_id: us-a-traf-01
+    ngsi_type: TrafficSensor
+    attribute: congestionLevel
+    sensor_id: us-a-traf-01:congestion
+    measurement: traffic_congestion
+    unit: "%"
+    guardian_zone: ZONE-A
+    guardian_property: congestion
+    guardian_unit: "%"
+  # Zone C — bins (us-c-bin-01..02)
+  - entity_id: us-c-bin-01
+    ngsi_type: WasteBin
+    attribute: fillLevel
+    sensor_id: us-c-bin-01:fill_level
+    measurement: fill
+    unit: "%"
+    guardian_zone: ZONE-C
+    guardian_property: fill_level
+    guardian_unit: "%"

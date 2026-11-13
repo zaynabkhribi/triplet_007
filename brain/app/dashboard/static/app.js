@@ -305,6 +305,15 @@ function renderCity(city, incidents) {
         "small", sensor.unit ? ` ${sensor.unit}` : ""
       ));
 
+      // Raw fallback (7.3F-2): when trust fusion has no eligible value, the
+      // tile still shows the latest STORED observation, clearly labeled raw.
+      const rawNow = current?.raw_latest?.[id];
+      if ((sensor.value === null || sensor.value === undefined) && rawNow) {
+        reading.append(node(
+          "small", ` (raw ${rawNow.value}${rawNow.unit ? " " + rawNow.unit : ""})`
+        ));
+      }
+
       button.append(top, reading);
 
       button.addEventListener("click", () => {
@@ -449,6 +458,20 @@ function renderSelected() {
     node("span", timeLabel(sensor.last_observed_at))
   );
 
+  // Raw/untrusted observations are distinct from trusted eligible state:
+  // show the latest real readings even when nothing is trust-eligible yet.
+  const rawNow = current?.raw_latest?.[selectedSensor];
+  const rawRecent = (current?.readings || [])
+    .filter((r) => r.sensor_id === selectedSensor)
+    .slice(0, 3);
+  if (rawNow) {
+    const label = node("span",
+      `raw observed: ${rawNow.value} ${rawNow.unit} (${timeLabel(rawNow.at)})` +
+      (rawRecent.length > 1 ? ` · +${rawRecent.length - 1} older` : ""));
+    label.className = "tag";
+    body.append(label);
+  }
+
   drawChart(selectedSensor, sensor.unit);
 }
 
@@ -566,6 +589,16 @@ function renderGuardian(data) {
 
   const target = $("trust-list");
   target.replaceChildren();
+
+  // Evidence reconciliation status (7.3F-1): audit-tail matches are
+  // verification-only evidence and MUST NOT be shown as TRUSTED grants.
+  if (data.evidence_mode === "audit_tail_reconciliation") {
+    const banner = node("span",
+      `Evidence reconciliation: ${data.audit_verified_matches ?? "?"} audit events accounted ` +
+      `· ${data.audit_pending ?? "?"} pending exact-match retries · TRUSTED grants: ${m.trusted_readings || 0}`);
+    banner.className = "tag";
+    target.append(banner);
+  }
 
   const verdicts = data.verdicts || [];
 
@@ -750,8 +783,11 @@ function render(snapshot) {
     ) || sensorIds[0] || null;
   }
 
+  const evidenceMode = snapshot.evidence_mode === "audit_tail_reconciliation"
+      ? "VERIFIED EVIDENCE (audit reconciliation, not authorized trust)"
+      : "GUARDIAN VERDICTS";
   $("env").textContent =
-    `${human(snapshot.environment)} / MOCK DATA`;
+    `${human(snapshot.environment)} / ${evidenceMode}`;
 
   $("updated").textContent =
     `Operational snapshot · ${clock(snapshot.generated_at)} · Values from Brain database`;
@@ -783,11 +819,19 @@ async function refresh() {
       Boolean(providers.brain?.processing)
     );
 
-    setService(
-      "twin-status",
-      providers.twin?.running ? "Twin: running" : "Twin: stopped",
-      Boolean(providers.twin?.running)
-    );
+    // Remote Twin: liveness is inferred from Orion entity freshness (the
+    // publisher is the partner's hosted Twin, not a local process).
+    if (providers.twin?.connected) {
+      setService(
+        "twin-status",
+        providers.twin.running
+          ? `Twin: publishing (age ${providers.twin.last_publish_age_s ?? "?"}s)`
+          : `Twin: stale (last publish ${providers.twin.last_publish_age_s ?? "?"}s ago)`,
+        Boolean(providers.twin.running)
+      );
+    } else {
+      setService("twin-status", "Twin: not connected", false);
+    }
 
     setService(
       "guardian-status",

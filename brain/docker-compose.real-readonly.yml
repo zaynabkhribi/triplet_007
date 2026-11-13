@@ -1,0 +1,69 @@
+# Brain-owned READ-ONLY Real-Integration deployment (Task 7.3D-2).
+#
+# Purpose: a standalone, isolated configuration for the future controlled
+# read-only exercise against the REAL Twin's Orion broker and the REAL
+# Guardian's integration API. Brain persists observations in its OWN
+# isolated database; no writes to Orion, no writes to Guardian.
+#
+# Deliberately NOT included here (and must NOT be added):
+# * mock-twin / mock-guardian services (Mock Mode lives in
+#   brain/docker-compose.yml with its own database and credentials).
+# * the obsolete root-stack "bridge" service: the root docker-compose.yml
+#   references app.integration.triplet_bridge, which does not exist in this
+#   repository; the Brain-owned NgsiTwinIngestWorker and
+#   GuardianShadowWorker supersede it. The root stack remains owned by the
+#   partner side and cannot be declared deployment-ready until its owner
+#   resolves that invalid reference.
+# * any actuator dispatch: ACTUATOR_EXECUTION_ENABLED is pinned to "false".
+#
+# External prerequisites (NOT satisfiable from this repository):
+# * Orion reachable at ORION_BASE_URL (e.g. the partner root stack's
+#   orion:1026 network — attach this stack to that network explicitly via
+#   an override, or supply an externally reachable URL).
+# * Guardian reachable over VERIFIED HTTPS at GUARDIAN_BASE_URL. The real
+#   Guardian currently exposes a plain HTTP application port in the partner
+#   root stack; a partner/proxy-owned TLS endpoint is REQUIRED because this
+#   Brain fail-closes on plain HTTP by design. No insecure fallback exists.
+# * GUARDIAN_INTEGRATION_TOKEN must match the value configured on the
+#   Guardian server; token enforcement there is only active when the server
+#   has that environment variable set (guardian/api.py). Supply it via env
+#   or a secret file — never commit it.
+#
+# Validate offline only:  docker compose -f docker-compose.real-readonly.yml config
+# NEVER validate with `up` until partner permission is granted.
+services:
+  brain-real:
+    build: .
+    image: triplet-07-brain
+    restart: "no"
+    env_file: .env.real-readonly
+    environment:
+      # Isolated database: never the Mock Mode volume or file.
+      DATABASE_URL: sqlite:////data/real_integration.db
+      CITY_REGISTRY_FILE: config/city.real-readonly.yaml
+      INCIDENT_RULES_FILE: config/incidents.real-readonly.yaml
+      DECISION_POLICY_FILE: config/policies.yaml
+      # Real-Mode workers only; no mock fallback exists in the code path.
+      # Flags are also set here so the stack does not depend on env-file
+      # contents for safety-critical switching.
+      WORKER_ENABLED: "true"
+      SNAP4CITY_INGEST_ENABLED: "true"
+      SNAP4CITY_DEVICES_FILE: config/devices.real-readonly.yaml
+      SNAP4CITY_POLL_SECONDS: "5"
+      GUARDIAN_SHADOW_RECONCILIATION_ENABLED: "true"
+      GUARDIAN_SHADOW_POLL_SECONDS: "30"
+      GUARDIAN_IDENTITY: triplet-guardian
+      # Safety: real actuation is structurally disabled here.
+      ACTUATOR_EXECUTION_ENABLED: "false"
+      OPERATIONAL_DEMO_ENABLED: "false"
+      OPERATIONAL_AUTO_APPROVE: "false"
+    ports:
+      - "127.0.0.1:8100:8000"
+    volumes:
+      - brain-real-data:/data
+      # The image bakes only app/ and mocks/ (see Dockerfile); configuration
+      # files must be mounted read-only from the repo checkout.
+      - ./config:/service/config:ro
+
+volumes:
+  brain-real-data:

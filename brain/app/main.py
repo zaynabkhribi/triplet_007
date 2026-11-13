@@ -26,6 +26,11 @@ from app.dashboard.api import STATIC as DASHBOARD_STATIC
 from app.dashboard.security import DashboardSessions
 from app.database.session import Database
 from app.execution.actuator_manager import ActuatorManager
+from app.integration.guardian_compat import (
+    AuditTailShadowWorker,
+    GuardianShadowWorker,
+)
+from app.integration.ngsi_twin import NgsiTwinIngestWorker
 from app.intelligence.artifacts import ArtifactRegistry
 from app.operations import OperationalCoordinator
 from app.scenarios import ScenarioRunner
@@ -67,12 +72,43 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if app_settings.worker_enabled and app_settings.operational_demo_enabled
             else None
         )
+        # Opt-in real Twin ingestion: started only when explicitly configured.
+        # Construction is fail-closed (invalid mapping/URL aborts startup); no
+        # fallback to mock transport exists.
+        twin_worker = None
+        if app_settings.snap4city_ingest_enabled and app_settings.worker_enabled:
+            try:
+                twin_worker = NgsiTwinIngestWorker.from_settings(app_settings, database)
+            except Exception as exc:
+                raise RuntimeError(f"Snap4City ingestion setup failed: {exc}") from exc
+            twin_worker.start()
+        # Opt-in Guardian shadow reconciliation: verification and observability
+        # only. Constructing it enforces the transport/token preconditions; it
+        # never grants trust, so it cannot alter decisions or commands. The
+        # evidence source is selected by configuration (integration_verdicts
+        # or audit_tail).
+        shadow_worker = None
+        if app_settings.guardian_shadow_reconciliation_enabled and app_settings.worker_enabled:
+            worker_cls = (
+                AuditTailShadowWorker
+                if app_settings.guardian_evidence_source == "audit_tail"
+                else GuardianShadowWorker
+            )
+            try:
+                shadow_worker = worker_cls.from_settings(app_settings, database)
+            except Exception as exc:
+                raise RuntimeError(f"Guardian shadow reconciliation setup failed: {exc}") from exc
+            shadow_worker.start()
         try:
             yield
         finally:
             processor.stop()
             actuator_manager.stop()
             coordinator.stop()
+            if twin_worker is not None:
+                await twin_worker.stop()
+            if shadow_worker is not None:
+                await shadow_worker.stop()
             if task is not None:
                 await task
             if actuator_task is not None:

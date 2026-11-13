@@ -7,6 +7,7 @@ revalidation, audit records, and command lifecycle semantics.
 """
 
 import asyncio
+import contextlib
 from uuid import UUID
 
 from sqlalchemy import select
@@ -46,10 +47,8 @@ async def test_coordinator_does_not_tick_when_execution_disabled(settings, tmp_p
         assert rows[0].status == "PENDING"
         await asyncio.sleep(0.05)
         coordinator.stop()
-        try:
-            await asyncio.wait_for(task, timeout=2)
-        except TimeoutError:
-            pass
+        with contextlib.suppress(TimeoutError):
+         await asyncio.wait_for(task, timeout=2)
         assert adapter.calls == 0, "dispatch must not happen when execution disabled"
 
 

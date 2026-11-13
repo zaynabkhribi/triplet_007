@@ -1,0 +1,9 @@
+# Real-Integration incident rules (Task 7.3D-2).
+#
+# Read-only exercise: NO incident rules are enabled, so no decisions can be
+# proposed from real observations even if city state is built. Structure
+# mirrors config/incidents.yaml (loaded by app.decision.config /
+# incident_rules); enabling rules is a separate, future, approved change.
+version: 1.0.0
+simulation_only: true
+rules: []

@@ -1,0 +1,32 @@
+# Real-Integration city registry (Tasks 7.3D-2/7.3D-3A).
+#
+# Schema-conformant against app.state.registry.Registry:
+#   zones are plain strings; measurement is a strict Literal and units must
+#   belong to that measurement's allowed set (registry.py compatible_unit).
+# Only the real channels that satisfy BOTH the registry schema and the
+# Guardian mapping are registered:
+#   smoke/ppm (us-b-bldg-01), temperature/degC (us-b-bldg-01).
+# Deliberately excluded:
+#   * congestionLevel ("%" is not a legal `traffic` unit) — cannot be
+#     registered without inventing a mapping; excluded rather than faked.
+#   * fillLevel ("fill" is not a measurement in the registry vocabulary).
+#   * vehicleCount/occupancy (ambiguous Guardian traffic_camera channel).
+# Unregistered channels are still ingestable (Brain accepts readings for
+# sensors absent from the registry) but stay outside fused city state —
+# correct for a read-only smoke exercise.
+zones:
+  - A
+  - B
+sensors:
+  - sensor_id: us-b-bldg-01:fire_smoke
+    zone_id: B
+    measurement: smoke
+    unit: ppm
+    freshness_seconds: 300
+  - sensor_id: us-b-bldg-01:temperature
+    zone_id: B
+    measurement: temperature
+    unit: degC
+    freshness_seconds: 300
+window_seconds: 300
+ema_alpha: 0.3

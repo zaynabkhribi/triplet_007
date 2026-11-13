@@ -337,3 +337,96 @@ async def test_all_scenarios_complete_through_dashboard(settings, scenario_id: s
             await asyncio.sleep(0.05)
     assert run["status"] == "PASSED"
     assert run["timeline"][-1]["stage"] == "SCENARIO_RESULT"
+
+
+async def test_provider_status_flattens_ngsi_timestamp_and_reports_fresh_twin(
+    settings,
+) -> None:
+    """Task 7.3F-2 regression: hosted Orion returns attributes as nested
+    {type, value} dicts. The Twin liveness probe must flatten them before
+    computing the publish age, otherwise a 2-second-old publication is
+    misreported as stale (the dict failed the isinstance(str) check)."""
+    settings.worker_enabled = False
+    settings.orion_base_url = "http://orion.test"
+    app = create_app(settings)
+
+    captured: dict = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["url"] = str(request.url)
+        # Exact hosted-broker shape: nested attribute dicts, including the
+        # timestamp that previously defeated the string check.
+        return httpx.Response(200, json={
+            "id": "us-b-bldg-01",
+            "type": "BuildingSensor",
+            "smokeLevel": {"type": "float", "value": 1.6},
+            "temperature": {"type": "float", "value": 22.3},
+            "timestamp": {
+                "type": "string", "value": "2026-11-13T19:08:17+00:00",
+            },
+        })
+
+    real_async_client = httpx.AsyncClient
+
+    # Intercept ONLY outbound Orion traffic: orion.test requests hit the
+    # fake handler, everything else flows through the real client so the
+    # dashboard session/CSRF calls keep working (a naive global monkey-patch
+    # broke the ASGI test client itself).
+    class SelectiveClient(real_async_client):
+        async def send(self, request, **kw):
+            if (request.url.host or "") == "orion.test":
+                captured["url"] = str(request.url)
+                return handler(request)
+            return await super().send(request, **kw)
+
+    httpx.AsyncClient = SelectiveClient  # type: ignore[assignment]
+    try:
+        async with (
+            app.router.lifespan_context(app),
+            httpx.AsyncClient(
+                transport=httpx.ASGITransport(app=app), base_url="http://test"
+            ) as client,
+        ):
+            login = await client.post(
+                "/dashboard/session",
+                headers={"X-API-Key": settings.brain_api_key.get_secret_value()},
+                json={},
+            )
+            assert login.status_code == 200
+            providers = (await client.get("/dashboard/api/operations")).json()
+    finally:
+        httpx.AsyncClient = real_async_client  # type: ignore[assignment]
+
+    twin = providers["twin"]
+    assert twin["connected"] is True
+    assert twin["running"] is True, (
+        "a 2s-old publication must classify as publishing, not stale"
+    )
+    assert twin["last_publish_age_s"] is not None and twin["last_publish_age_s"] < 120
+    assert twin["values"]["smokeLevel"] == 1.6
+    assert twin["values"]["temperature"] == 22.3
+    assert "us-b-bldg-01" in captured["url"]
+
+
+async def test_snapshot_raw_layer_exposes_latest_untrusted_readings(
+    settings, tmp_path
+) -> None:
+    """The raw observation layer must surface the latest STORED reading per
+    sensor regardless of trust eligibility, distinctly from fused state."""
+    settings.worker_enabled = False
+    app = create_app(settings)
+    async with (
+        app.router.lifespan_context(app),
+        httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://test"
+        ) as client,
+    ):
+        login = await client.post(
+            "/dashboard/session",
+            headers={"X-API-Key": settings.brain_api_key.get_secret_value()},
+            json={},
+        )
+        assert login.status_code == 200
+        snapshot = (await client.get("/dashboard/api/snapshot")).json()
+        # No observations stored: raw layer is present but empty.
+        assert snapshot["raw_latest"] == {}

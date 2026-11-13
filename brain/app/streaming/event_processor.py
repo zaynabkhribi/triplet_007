@@ -85,12 +85,15 @@ class EventProcessor:
                 per_event = dict.fromkeys(stage_totals, 0.0)
                 try:
                     savepoint_started = time.perf_counter()
-                    with session.begin_nested() as savepoint:
+                    with session.begin_nested():
                         savepoint_entry_ms = (
                             (time.perf_counter() - savepoint_started) * 1000.0
                         )
                         reading = session.get(SensorEvent, event_id)
-                        get_ms = (time.perf_counter() - savepoint_started) * 1000.0 - savepoint_entry_ms
+                        get_ms = (
+                           (time.perf_counter() - savepoint_started) * 1000.0
+                           - savepoint_entry_ms
+                     )
                         row.processing = "processing"
                         row.attempts += 1
                         row.eligible = False
@@ -221,37 +224,45 @@ class EventProcessor:
                 self.city.rebuild(session, now)
                 rebuild_ms = (time.perf_counter() - rebuild_started) * 1000.0
             else:
-                # Idle tick: only revalidate authorization when active decisions
-                # exist. Decision inputs (quarantines, resource availability,
-                # incident evidence) are re-derived from the live database by
-                # DecisionEngine.context(), so the latest persisted city
-                # snapshot is a sound state input even without a fresh rebuild.
-                has_active = session.scalar(
-                    select(DecisionRecord.id)
-                    .where(
-                        DecisionRecord.status.in_(
-                            ["PROPOSED", "EVALUATED", "APPROVED"],
-                        )
-                    )
+                # Idle tick: revalidate authorization when active decisions
+                # exist, and keep incident evaluation live even without new
+                # events: forecast expiry/invalidation, cooldown re-detection
+                # and rule removal are all observed only through
+                # IncidentDetector.evaluate(). Decision inputs (quarantines,
+                # resource availability, incident evidence) are re-derived
+                # from the live database by DecisionEngine.context(), and
+                # observation/forecast signals re-read current SensorEvent
+                # and ForecastRecord rows, so the latest persisted city
+                # snapshot is a sound state input even without a fresh
+                # rebuild. Only a full sensor rebuild is skipped.
+                snapshot = session.scalar(
+                    select(CitySnapshot)
+                    .order_by(CitySnapshot.version.desc())
                     .limit(1)
-                ) is not None
-                if has_active:
-                    snapshot = session.scalar(
-                        select(CitySnapshot)
-                        .order_by(CitySnapshot.version.desc())
+                )
+                if snapshot is None:
+                    # No snapshot to safely evaluate against; fall back to a
+                    # full rebuild so neither incidents nor invalidation can
+                    # be skipped.
+                    self.city.rebuild(session, now)
+                else:
+                    state = {
+                        "version": snapshot.version,
+                        "as_of": now.isoformat(),
+                        **snapshot.payload,
+                    }
+                    self.city.incidents.evaluate(session, state, now)
+                    has_active = session.scalar(
+                        select(DecisionRecord.id)
+                        .where(
+                            DecisionRecord.status.in_(
+                                ["PROPOSED", "EVALUATED", "APPROVED"],
+                            )
+                        )
                         .limit(1)
-                    )
-                    if snapshot is not None:
-                        state = {
-                            "version": snapshot.version,
-                            "as_of": now.isoformat(),
-                            **snapshot.payload,
-                        }
+                    ) is not None
+                    if has_active:
                         self.city.decisions.invalidate(session, state, now)
-                    else:
-                        # No snapshot to safely revalidate against; fall back
-                        # to a full rebuild so invalidation cannot be skipped.
-                        self.city.rebuild(session, now)
 
         total_ms = (time.perf_counter() - batch_started) * 1000.0
         if count:
