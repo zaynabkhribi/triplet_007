@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Any
 from uuid import UUID, uuid4
 
-from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text, Uuid
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Index, Integer, String, Text, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -17,6 +17,9 @@ class EventRecord:
 
 class SensorEvent(EventRecord, Base):
     __tablename__ = "sensor_events"
+    __table_args__ = (
+        Index("ix_sensor_events_sensor_time_id", "sensor_id", "occurred_at", "id"),
+    )
 
     sensor_id: Mapped[str] = mapped_column(String(128), index=True)
 

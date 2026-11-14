@@ -89,6 +89,12 @@ class Database:
             with self.engine.begin() as connection:
                 connection.execute(
                     text("""
+                        CREATE INDEX IF NOT EXISTS ix_sensor_events_sensor_time_id
+                        ON sensor_events (sensor_id, occurred_at, id)
+                    """)
+                )
+                connection.execute(
+                    text("""
                         CREATE INDEX IF NOT EXISTS ix_audit_events_event_id_json
                         ON audit_events (
                             JSON_EXTRACT(payload, '$."event_id"')

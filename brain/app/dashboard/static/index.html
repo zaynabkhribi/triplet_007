@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#091724">
   <title>AegisCity | Operations Center</title>
-  <link rel="stylesheet" href="/dashboard/static/app.css?v=10">
+  <link rel="stylesheet" href="/dashboard/static/app.css?v=11">
 </head>
 <body>
   <section id="login" class="login-shell">
@@ -37,7 +37,7 @@
         <span class="service" id="brain-status">Brain: checking</span>
       </div>
       <div class="header-end">
-        <span class="environment" id="env">MOCK DATA</span>
+        <span class="environment" id="env">Checking trust mode</span>
         <span id="role" class="role"></span>
         <button id="logout" class="button ghost" type="button">Sign out</button>
       </div>
@@ -53,7 +53,7 @@
         <div class="intro-status">
           <span class="pulse-dot"></span>
           <span>Operational view</span>
-          <small>Mock sensor environment</small>
+          <small id="runtime-context">Connecting to live runtime</small>
         </div>
       </section>
 
@@ -167,10 +167,10 @@
 
       <footer class="footer">
         AEGISCITY BRAIN <span>·</span>
-        Standalone development system — mock data, simulated actuators
+        <span id="runtime-safety">Loading execution safety status</span>
       </footer>
     </main>
   </div>
-  <script src="/dashboard/static/app.js?v=10" defer></script>
+  <script src="/dashboard/static/app.js?v=14" defer></script>
 </body>
 </html>

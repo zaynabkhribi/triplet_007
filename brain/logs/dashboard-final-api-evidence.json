@@ -1,0 +1,194 @@
+[
+  {
+    "at": "2026-11-14T09:19:44.102922+00:00",
+    "seconds": 0.19,
+    "trusted": 0,
+    "eligible": 0,
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      },
+      "us-b-bldg-01:temperature": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      }
+    }
+  },
+  {
+    "at": "2026-11-14T09:19:46.289371+00:00",
+    "seconds": 0.16,
+    "trusted": 0,
+    "eligible": 0,
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      },
+      "us-b-bldg-01:temperature": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      }
+    }
+  },
+  {
+    "at": "2026-11-14T09:19:48.458195+00:00",
+    "seconds": 0.09,
+    "trusted": 0,
+    "eligible": 0,
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      },
+      "us-b-bldg-01:temperature": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      }
+    }
+  },
+  {
+    "at": "2026-11-14T09:19:50.572009+00:00",
+    "seconds": 0.45,
+    "trusted": 0,
+    "eligible": 0,
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      },
+      "us-b-bldg-01:temperature": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      }
+    }
+  },
+  {
+    "city_api": {
+      "version": 3889,
+      "as_of": "2026-11-14T09:19:54.719181+00:00",
+      "zones": {
+        "A": {
+          "sensors": [],
+          "measurements": {}
+        },
+        "B": {
+          "sensors": [
+            "us-b-bldg-01:fire_smoke",
+            "us-b-bldg-01:temperature"
+          ],
+          "measurements": {
+            "smoke:ppm": {
+              "value": null,
+              "contributors": [],
+              "missing": [
+                "us-b-bldg-01:fire_smoke"
+              ],
+              "correlations": []
+            },
+            "temperature:degC": {
+              "value": null,
+              "contributors": [],
+              "missing": [
+                "us-b-bldg-01:temperature"
+              ],
+              "correlations": []
+            }
+          }
+        }
+      },
+      "sensors": {
+        "us-b-bldg-01:fire_smoke": {
+          "sensor_id": "us-b-bldg-01:fire_smoke",
+          "zone_id": "B",
+          "measurement": "smoke",
+          "unit": "ppm",
+          "weight": 1.0,
+          "freshness_seconds": 300,
+          "training_source": null,
+          "training_id": null,
+          "training_compatible": false,
+          "training_timezone": null,
+          "availability": "stale",
+          "trust_status": "unverified",
+          "last_observed_at": null,
+          "value": null,
+          "statistics": {
+            "count": 0,
+            "mean": null,
+            "stddev": null,
+            "ema": null,
+            "rate_per_second": null
+          },
+          "evidence": []
+        },
+        "us-b-bldg-01:temperature": {
+          "sensor_id": "us-b-bldg-01:temperature",
+          "zone_id": "B",
+          "measurement": "temperature",
+          "unit": "degC",
+          "weight": 1.0,
+          "freshness_seconds": 300,
+          "training_source": null,
+          "training_id": null,
+          "training_compatible": false,
+          "training_timezone": null,
+          "availability": "stale",
+          "trust_status": "unverified",
+          "last_observed_at": null,
+          "value": null,
+          "statistics": {
+            "count": 0,
+            "mean": null,
+            "stddev": null,
+            "ema": null,
+            "rate_per_second": null
+          },
+          "evidence": []
+        }
+      },
+      "registry": {
+        "zones": [
+          "A",
+          "B"
+        ],
+        "sensors": [
+          {
+            "sensor_id": "us-b-bldg-01:fire_smoke",
+            "zone_id": "B",
+            "measurement": "smoke",
+            "unit": "ppm",
+            "weight": 1.0,
+            "freshness_seconds": 300,
+            "training_source": null,
+            "training_id": null,
+            "training_compatible": false,
+            "training_timezone": null
+          },
+          {
+            "sensor_id": "us-b-bldg-01:temperature",
+            "zone_id": "B",
+            "measurement": "temperature",
+            "unit": "degC",
+            "weight": 1.0,
+            "freshness_seconds": 300,
+            "training_source": null,
+            "training_id": null,
+            "training_compatible": false,
+            "training_timezone": null
+          }
+        ],
+        "window_seconds": 300,
+        "ema_alpha": 0.3
+      }
+    }
+  }
+]

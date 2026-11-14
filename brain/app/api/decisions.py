@@ -28,6 +28,21 @@ class EvaluationRequest(BaseModel):
 
 @router.post("/v1/decisions/evaluate", dependencies=[Depends(require_role("brain"))])
 async def evaluate(event: EvaluationRequest, request: Request) -> dict:
+    # Task 7.3G-7B: refresh passport eligibility ASYNC on this event loop
+    # BEFORE the synchronous rebuild/decision runs in a worker thread. The
+    # snapshot consumed by rebuild() is then at most a few ms old.
+
+    async def prime() -> None:
+        city = request.app.state.city_engine
+        if not city.eligibility.enabled:
+            return
+        now = datetime.now(UTC)
+        with request.app.state.database.transaction() as session:
+            candidates = city.recent_candidates(session, now)
+        await city.eligibility.refresh(candidates, now)
+
+    await prime()
+
     def run() -> tuple[int, dict]:
         city = request.app.state.city_engine
         with request.app.state.database.transaction() as session:

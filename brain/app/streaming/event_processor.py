@@ -33,11 +33,13 @@ class EventProcessor:
         self.trust = TrustEngine(settings)
         self.city = CityEngine(database, settings)
         self._stop = asyncio.Event()
+        self._legacy_recovery_complete = False
+        self._next_idle_maintenance = datetime.min.replace(tzinfo=UTC)
 
     async def run(self) -> None:
         while not self._stop.is_set():
             try:
-                await self.tick()
+                await self.tick(force_idle_maintenance=False)
             except Exception:
                 logger.exception("event_worker_poll_failed")
             with suppress(TimeoutError):
@@ -46,16 +48,30 @@ class EventProcessor:
     def stop(self) -> None:
         self._stop.set()
 
-    async def tick(self, now: datetime | None = None) -> int:
-        return await asyncio.to_thread(self.process_batch, now or datetime.now(UTC))
+    async def tick(
+        self,
+        now: datetime | None = None,
+        *,
+        force_idle_maintenance: bool = True,
+    ) -> int:
+        return await asyncio.to_thread(
+            self.process_batch,
+            now or datetime.now(UTC),
+            force_idle_maintenance,
+        )
 
-    def process_batch(self, now: datetime) -> int:
+    def process_batch(self, now: datetime, force_idle_maintenance: bool = True) -> int:
         batch_started = time.perf_counter()
         count = 0
         rebuild_ms = 0.0
-        with self.database.transaction() as session:
+        with self.database.transaction(_source="event_processor") as session:
             recover_started = time.perf_counter()
-            recover_legacy_events(session, now, self.settings.worker_batch_size)
+            if not self._legacy_recovery_complete:
+                recover_legacy_events(session, now, self.settings.worker_batch_size)
+                # Current ingestion creates SensorEvent and EventLifecycle in
+                # one transaction. Legacy recovery is therefore a startup
+                # migration check, not useful work for every worker poll.
+                self._legacy_recovery_complete = True
             recover_ms = (time.perf_counter() - recover_started) * 1000.0
             query_started = time.perf_counter()
             rows = session.scalars(
@@ -223,6 +239,9 @@ class EventProcessor:
                 rebuild_started = time.perf_counter()
                 self.city.rebuild(session, now)
                 rebuild_ms = (time.perf_counter() - rebuild_started) * 1000.0
+                self._next_idle_maintenance = now + timedelta(
+                    seconds=self.settings.worker_idle_maintenance_seconds
+                )
             else:
                 # Idle tick: revalidate authorization when active decisions
                 # exist, and keep incident evaluation live even without new
@@ -245,7 +264,10 @@ class EventProcessor:
                     # full rebuild so neither incidents nor invalidation can
                     # be skipped.
                     self.city.rebuild(session, now)
-                else:
+                    self._next_idle_maintenance = now + timedelta(
+                        seconds=self.settings.worker_idle_maintenance_seconds
+                    )
+                elif force_idle_maintenance or now >= self._next_idle_maintenance:
                     state = {
                         "version": snapshot.version,
                         "as_of": now.isoformat(),
@@ -263,8 +285,22 @@ class EventProcessor:
                     ) is not None
                     if has_active:
                         self.city.decisions.invalidate(session, state, now)
+                    self._next_idle_maintenance = now + timedelta(
+                        seconds=self.settings.worker_idle_maintenance_seconds
+                    )
 
         total_ms = (time.perf_counter() - batch_started) * 1000.0
+        if count:
+            logger.info(
+                "event_worker_batch_metrics events=%d total_ms=%.1f "
+                "recover_ms=%.1f query_ms=%.1f process_ms=%.1f rebuild_ms=%.1f",
+                count,
+                total_ms,
+                recover_ms,
+                query_ms,
+                process_ms,
+                rebuild_ms,
+            )
         if count:
             if (
                 recover_ms > _RECOVER_WARN_MS

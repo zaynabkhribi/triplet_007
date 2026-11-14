@@ -1,0 +1,122 @@
+[
+  {
+    "at": "2026-11-14T03:22:32.704352+00:00",
+    "seconds": 3.61,
+    "trusted": 0,
+    "eligible": 0,
+    "mode": "guardian_passports",
+    "safety": {
+      "actuator_execution_enabled": false,
+      "automatic_approval_enabled": false,
+      "mock_controls_enabled": false
+    },
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      },
+      "us-b-bldg-01:temperature": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      }
+    }
+  },
+  {
+    "at": "2026-11-14T03:22:38.430827+00:00",
+    "seconds": 3.73,
+    "trusted": 0,
+    "eligible": 0,
+    "mode": "guardian_passports",
+    "safety": {
+      "actuator_execution_enabled": false,
+      "automatic_approval_enabled": false,
+      "mock_controls_enabled": false
+    },
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      },
+      "us-b-bldg-01:temperature": {
+        "value": null,
+        "availability": "stale",
+        "last_observed_at": null
+      }
+    }
+  },
+  {
+    "at": "2026-11-14T03:22:46.957573+00:00",
+    "seconds": 6.45,
+    "trusted": 2,
+    "eligible": 2,
+    "mode": "guardian_passports",
+    "safety": {
+      "actuator_execution_enabled": false,
+      "automatic_approval_enabled": false,
+      "mock_controls_enabled": false
+    },
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": 2.7,
+        "availability": "available",
+        "last_observed_at": "2026-11-14T03:22:36+00:00"
+      },
+      "us-b-bldg-01:temperature": {
+        "value": 22.2,
+        "availability": "available",
+        "last_observed_at": "2026-11-14T03:22:36+00:00"
+      }
+    }
+  },
+  {
+    "at": "2026-11-14T03:23:00.456246+00:00",
+    "seconds": 11.67,
+    "trusted": 4,
+    "eligible": 2,
+    "mode": "guardian_passports",
+    "safety": {
+      "actuator_execution_enabled": false,
+      "automatic_approval_enabled": false,
+      "mock_controls_enabled": false
+    },
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": 1.6,
+        "availability": "available",
+        "last_observed_at": "2026-11-14T03:22:46+00:00"
+      },
+      "us-b-bldg-01:temperature": {
+        "value": 21.7,
+        "availability": "available",
+        "last_observed_at": "2026-11-14T03:22:46+00:00"
+      }
+    }
+  },
+  {
+    "at": "2026-11-14T03:23:20.867725+00:00",
+    "seconds": 18.41,
+    "trusted": 2,
+    "eligible": 2,
+    "mode": "guardian_passports",
+    "safety": {
+      "actuator_execution_enabled": false,
+      "automatic_approval_enabled": false,
+      "mock_controls_enabled": false
+    },
+    "sensors": {
+      "us-b-bldg-01:fire_smoke": {
+        "value": 2.1,
+        "availability": "available",
+        "last_observed_at": "2026-11-14T03:22:52+00:00"
+      },
+      "us-b-bldg-01:temperature": {
+        "value": 22.1,
+        "availability": "available",
+        "last_observed_at": "2026-11-14T03:22:52+00:00"
+      }
+    }
+  }
+]

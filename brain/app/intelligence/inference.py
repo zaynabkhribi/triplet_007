@@ -187,6 +187,7 @@ def currently_eligible(
     settings: Settings,
     payload: dict,
     now: datetime | None = None,
+    passport_eligibility=None,
 ) -> bool:
     evidence = payload.get("evidence", [])
     if not evidence:
@@ -200,13 +201,26 @@ def currently_eligible(
     for item in evidence:
         reading = session.get(SensorEvent, UUID(item["event_id"]))
         lifecycle = session.get(EventLifecycle, UUID(item["event_id"]))
-        if reading is None or lifecycle is None or not lifecycle.eligible:
+        if reading is None or lifecycle is None:
             return False
         result = trust.evaluate(session, reading, lifecycle, now)
+        # Task 7.3G-7B: passport eligibility is consumed from the immutable
+        # snapshot refreshed async by the caller before this sync stage.
+        passport_ok = (
+            passport_eligibility is not None
+            and passport_eligibility.eligible_at(reading.id, now)
+            and result.reason in {"awaiting_guardian", "verdict_missing"}
+        )
+        durable_ok = (
+            result.state == "TRUSTED"
+            and lifecycle.eligible
+            and result.verdict_id == lifecycle.verdict_id
+        )
+        if not (durable_ok or passport_ok):
+            return False
         if (
-            str(lifecycle.verdict_id) != item["verdict_id"]
-            or result.state != "TRUSTED"
-            or result.verdict_id != lifecycle.verdict_id
+            durable_ok
+            and str(lifecycle.verdict_id) != item["verdict_id"]
         ):
             return False
         if (now - utc(reading.occurred_at)).total_seconds() > mappings[reading.sensor_id][

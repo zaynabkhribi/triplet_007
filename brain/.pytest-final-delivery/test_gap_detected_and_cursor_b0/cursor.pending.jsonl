@@ -1,0 +1,1 @@
+{"code": "ACCEPTED", "event": "reading.accepted", "evidence_digest": "sha256:0c3f352490aa7d3948a57f54a3257c751566bbacaa9b3cff37f3c6c9dec9cb68", "observed_property": "fire_smoke", "reading_id": "us-b-bldg-01:fire_smoke:2026-01-01T00:00:00+00:00", "sensor_id": "us-b-bldg-01", "seq": 5, "ts": "2026-01-01T00:00:05Z", "value": 2.2, "zone": "ZONE-B"}

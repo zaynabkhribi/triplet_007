@@ -29,6 +29,9 @@ class DecisionEngine:
     def __init__(self, settings: Settings, incident_rules: IncidentRules) -> None:
         self.settings, self.incident_rules = settings, incident_rules
         self.policy, self.error = load_policy(settings.decision_policy_file)
+        # Task 7.3G-7: optional passport eligibility index, injected by
+        # CityEngine (disabled by default; None means durable-verdict mode).
+        self.passport_eligibility = None  # injected by CityEngine
 
     def context(self, session: Session, state: dict, now: datetime) -> dict:
         incidents = [
@@ -50,6 +53,7 @@ class DecisionEngine:
                 incident,
                 state,
                 now,
+                passport_eligibility=getattr(self, "passport_eligibility", None),
             )
         ]
         policy = self.policy

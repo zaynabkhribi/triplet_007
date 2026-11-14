@@ -1,6 +1,7 @@
 """Actuator tests use synthetic decisions and simulated devices only."""
 
 import asyncio
+import json
 from datetime import UTC, datetime, timedelta
 from uuid import NAMESPACE_URL, UUID, uuid5
 
@@ -9,11 +10,11 @@ import pytest
 from pydantic import AnyHttpUrl, SecretStr
 from sqlalchemy import func, select
 
-from app.database.models import ActuatorCommandRecord, DecisionRecord
+from app.database.models import ActuatorCommandRecord, DecisionRecord, DecisionRevision
 from app.execution.actuator_manager import MockTwinAdapter
 from app.integration.orion_adapter import Delivery, OrionAdapter, OrionError
 from app.main import create_app
-from app.schemas.actuator import ActuatorFeedback, FeedbackStatus
+from app.schemas.actuator import ActuatorCommand, ActuatorFeedback, FeedbackStatus
 from app.schemas.guardian import QuarantineNotification
 from mocks.mock_twin import create_app as create_twin
 from tests.integration.test_decisions import evaluate, scenario
@@ -331,11 +332,81 @@ async def test_orion_payload_auth_and_reconciliation(settings):
     )
     assert (await adapter.deliver(command)).transport_status == 204
     payload = __import__("json").loads(seen[0].content)
-    assert payload["command"]["value"]["command_id"] == str(command.command_id)
+    # Task 7.3G: REAL Twin contract = plain NGSI attributes, no legacy
+    # StructuredValue "command" wrapper.
+    assert "command" not in payload
+    assert payload["level"] == {"type": "float", "value": 1.0}
     assert seen[0].headers["authorization"] == "Bearer synthetic-token"
     assert seen[0].headers["fiware-service"] == "city"
     assert "fixture%2F1" in str(seen[0].url)
+    # Twin contract: PATCH with elementid/type query params (no k1/k2 here —
+    # no secrets file configured in this test → fail-closed unauthenticated).
+    query = str(seen[0].url).split("?")[-1]
+    assert "elementid=" in query and "fixture%2F1" in query
+    assert "type=" in query and "k1" not in query and "k2" not in query
     assert (await adapter.state("fixture/1"))["status"] == "executed"
+
+
+async def test_orion_per_device_credentials_and_readback(settings, tmp_path):
+    """Task 7.3G: device-scoped k1/k2 from the secrets file attach to the
+    PATCH of THAT device only, and readback uses the plain entity GET."""
+    secrets_file = tmp_path / "secrets.json"
+    secrets_file.write_text(
+        json.dumps({"us-b-alarm-01": {"k1": "K1", "k2": "K2"}}), encoding="utf-8"
+    )
+    settings.orion_base_url = AnyHttpUrl("https://orion.invalid")
+    settings.orion_actuator_secrets_file = str(secrets_file)
+    settings.orion_entity_prefix = ""
+    settings.orion_bearer_token = SecretStr("synthetic-token")
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        if request.method == "PATCH":
+            return httpx.Response(204)
+        return httpx.Response(
+            200,
+            json={
+                "id": "us-b-alarm-01",
+                "type": "FireAlarm",
+                "alarmState": {"type": "string", "value": "on"},
+            },
+        )
+
+    adapter = OrionAdapter(settings, httpx.MockTransport(handler))
+    now = datetime.now(UTC)
+    command = ActuatorCommand(
+        command_id=uuid5(NAMESPACE_URL, "alarm"),
+        decision_id=uuid5(NAMESPACE_URL, "decision"),
+        correlation_id=uuid5(NAMESPACE_URL, "correlation"),
+        issued_at=now,
+        actuator_id="us-b-alarm-01",
+        action="alarmState",
+        parameters={"alarmState": "on"},
+        expires_at=now + timedelta(minutes=1),
+    )
+    assert (await adapter.deliver(command)).transport_status == 204
+    url = str(seen[0].url)
+    assert "us-b-alarm-01" in url
+    assert "k1=K1" in url and "k2=K2" in url
+    assert "elementid=us-b-alarm-01" in url
+    assert "type=FireAlarm" in url
+    payload = json.loads(seen[0].content)
+    assert payload == {"alarmState": {"type": "string", "value": "on"}}
+
+    # Readback: plain entity GET with elementid/type, NO credentials.
+    entity = await adapter.read_entity("us-b-alarm-01")
+    read_url = str(seen[-1].url)
+    assert read_url.startswith("https://orion.invalid/v2/entities/us-b-alarm-01")
+    assert "elementid=us-b-alarm-01" in read_url and "type=FireAlarm" in read_url
+    assert "k1" not in read_url and "k2" not in read_url
+
+    # Unknown device: no credentials attached (fail-closed, honest attempt).
+    command_unknown = command.model_copy(update={"actuator_id": "us-a-light-01"})
+    await adapter.deliver(command_unknown)
+    assert seen[-1].method == "PATCH"
+    assert "k1" not in seen[-1].url.params and "k2" not in seen[-1].url.params
+    assert entity == {"alarmState": "on"}
 
 
 @pytest.mark.parametrize("status,retryable", [(401, False), (503, True)])
@@ -371,3 +442,97 @@ async def test_orion_rejects_malformed_state(settings):
     )
     with pytest.raises(OrionError, match="orion_state_invalid_payload"):
         await adapter.state("fixture")
+
+
+async def test_approved_orion_command_requires_later_twin_publication(settings, tmp_path):
+    """Full isolated Zone-B chain through Orion publication and dashboard readback."""
+    settings.actuator_execution_enabled = True
+    settings.orion_base_url = AnyHttpUrl("https://orion.invalid")
+    settings.orion_entity_prefix = ""
+    settings.command_retry_seconds = 0.01
+    secrets_file = tmp_path / "synthetic-keys.json"
+    secrets_file.write_text(json.dumps({"us-b-alarm-01": {"k1": "fixture", "k2": "fixture"}}))
+    settings.orion_actuator_secrets_file = str(secrets_file)
+
+    def policy_change(policy):
+        actuator = policy["actuators"].pop("fixture-actuator")
+        actuator["capabilities"] = {
+            "simulation_response": {"alarmState": {"values": ["on", "off"]}}
+        }
+        policy["actuators"]["us-b-alarm-01"] = actuator
+        policy["actions"][0].update(actuator_id="us-b-alarm-01", parameters={"alarmState": "on"})
+
+    async with scenario(settings, tmp_path, change=policy_change) as (app, client, _):
+        observed = {"timestamp": datetime.now(UTC) - timedelta(seconds=1)}
+        patches = []
+
+        def handler(request):
+            if request.method == "PATCH":
+                patches.append(request)
+                return httpx.Response(204)
+            return httpx.Response(
+                200,
+                json={
+                    "id": "us-b-alarm-01",
+                    "type": "FireAlarm",
+                    "alarmState": {"type": "string", "value": "on"},
+                    "timestamp": {"type": "string", "value": observed["timestamp"].isoformat()},
+                },
+            )
+
+        manager = app.state.actuator_manager
+        manager.adapter = OrionAdapter(settings, httpx.MockTransport(handler))
+        decision = await approved(client, settings)
+        response = await execute(client, settings, decision["decision_id"])
+        identifier = UUID(response.json()["commands"][0]["command_id"])
+        await manager.tick()
+        assert len(patches) == 1
+        assert json.loads(patches[0].content) == {"alarmState": {"type": "string", "value": "on"}}
+        assert patches[0].url.params["type"] == "FireAlarm"
+        assert patches[0].url.params["k1"] == "fixture"
+        with app.state.database.transaction() as session:
+            row = session.get(ActuatorCommandRecord, identifier)
+            command = ActuatorCommand.model_validate(row.payload["command"])
+            delivered = datetime.fromisoformat(row.payload["delivered_at"])
+        # The broker already echoes the target but Twin has not republished it.
+        await manager._reconcile_or_timeout(identifier, command, delivered + timedelta(seconds=1))
+        with app.state.database.transaction() as session:
+            assert session.get(ActuatorCommandRecord, identifier).status == "DELIVERED"
+        observed["timestamp"] = delivered + timedelta(seconds=2)
+        await manager._reconcile_or_timeout(identifier, command, delivered + timedelta(seconds=3))
+        with app.state.database.transaction() as session:
+            row = session.get(ActuatorCommandRecord, identifier)
+            assert row.status == "EXECUTED"
+            assert row.payload["execution"]["source"] == "orion_entity"
+        await manager.tick(delivered + timedelta(seconds=4))
+        assert len(patches) == 1
+
+        # The operator view must agree with the authoritative persisted chain:
+        # incident -> optimal decision -> explicit approval -> executed command.
+        login = await client.post(
+            "/dashboard/session",
+            headers={"X-API-Key": settings.brain_api_key.get_secret_value()},
+            json={},
+        )
+        assert login.status_code == 200
+        dashboard = (await client.get("/dashboard/api/snapshot")).json()
+        assert dashboard["metrics"]["active_incidents"] == 1
+        assert dashboard["metrics"]["approved_decisions"] == 1
+        assert dashboard["metrics"]["executed_commands"] == 1
+        assert dashboard["decisions"][0]["reason"] == "explicit_service_approval"
+        assert dashboard["decisions"][0]["approval"]["reason"] == "synthetic approval"
+        assert dashboard["decisions"][0]["selected_actions"][0]["actuator_id"] == (
+            "us-b-alarm-01"
+        )
+        assert dashboard["actions"][0]["command_id"] == str(identifier)
+        assert dashboard["actions"][0]["status"] == "EXECUTED"
+        assert dashboard["actions"][0]["execution"]["source"] == "orion_entity"
+        with app.state.database.transaction() as session:
+            revisions = list(
+                session.scalars(
+                    select(DecisionRevision).order_by(DecisionRevision.created_at)
+                )
+            )
+        assert any(
+            revision.payload.get("reason") == "optimal_verified" for revision in revisions
+        )

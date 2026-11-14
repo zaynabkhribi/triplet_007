@@ -204,6 +204,7 @@ function rememberReadings(readings) {
     if (!reading || !reading.event_id ||
         seenEvents.has(reading.event_id)) continue;
 
+    if (reading.currently_eligible !== true) continue;
     seenEvents.add(reading.event_id);
     seenOrder.push(reading.event_id);
 
@@ -408,10 +409,31 @@ function renderIncidents(data) {
         "span",
         `Decision: ${human(linked.status)}${names ? ` · ${names}` : ""}`
       ));
+
+      const command = (data.actions || []).find(
+        (action) => action.decision_id === linked.id
+      );
+      if (role === "brain" && linked.status === "EVALUATED") {
+        const approve = node("button", "Approve decision", "button primary");
+        approve.type = "button";
+        approve.addEventListener("click", () => approveDecision(linked.id));
+        foot.append(approve);
+      } else if (role === "brain" && linked.status === "APPROVED" && !command) {
+        const execute = node("button", "Enqueue approved action", "button primary");
+        execute.type = "button";
+        execute.addEventListener("click", () => executeDecision(linked.id));
+        foot.append(execute);
+      }
     } else {
       foot.append(node(
         "span", "Decision: no linked plan in current snapshot"
       ));
+      if (role === "brain" && ACTIVE.has(incident.status)) {
+        const evaluate = node("button", "Evaluate optimal response", "button primary");
+        evaluate.type = "button";
+        evaluate.addEventListener("click", evaluateDecision);
+        foot.append(evaluate);
+      }
     }
 
     foot.append(node(
@@ -429,6 +451,33 @@ function renderIncidents(data) {
       "Recent incident history is shown below."
     ));
   }
+}
+
+async function decisionAction(path, payload = {}) {
+  try {
+    await request(path, {
+      method: "POST",
+      headers: { "X-Dashboard-CSRF": csrf },
+      body: JSON.stringify(payload)
+    });
+    await refresh();
+  } catch (error) {
+    showNotice(`Decision action failed: ${error.message}`);
+  }
+}
+
+function evaluateDecision() {
+  return decisionAction("/dashboard/api/decisions/evaluate");
+}
+
+function approveDecision(decisionId) {
+  const reason = window.prompt("Approval reason (required):", "Approved mock simulation response");
+  if (!reason) return;
+  return decisionAction(`/dashboard/api/decisions/${decisionId}/approve`, { reason });
+}
+
+function executeDecision(decisionId) {
+  return decisionAction(`/dashboard/api/decisions/${decisionId}/execute`);
 }
 
 function renderSelected() {
@@ -578,11 +627,10 @@ function drawChart(id, unit) {
 
 function renderGuardian(data) {
   const m = data.metrics || {};
-  const all = (m.trusted_readings || 0) +
-              (m.rejected_readings || 0);
+  const all = m.registered_sensors || 0;
 
   const percent = all
-    ? `${number(100 * (m.trusted_readings || 0) / all, 1)}% trusted`
+    ? `${number(100 * (m.eligible_sensors || 0) / all, 1)}% sensors eligible now`
     : "No verdicts";
 
   $("trust-summary").textContent = percent;
@@ -600,6 +648,13 @@ function renderGuardian(data) {
     target.append(banner);
   }
 
+  if (data.evidence_mode === "guardian_passports") {
+    target.append(recordRow("Authenticated Guardian Passports",
+      `${m.eligible_sensors || 0}/${all} sensors eligible · ${m.trusted_readings || 0} readings eligible now`, m.eligible_sensors ? "available" : "stale"));
+    target.append(node("p", "Signatures and observation freshness checked. Eligibility expires; Passport TTL does not prove current Guardian revocation or quarantine status."));
+    target.append(node("p", `Durable TRUSTED records: ${m.durable_trusted_readings || 0}. Audit reconciliation remains verification-only.`));
+    return;
+  }
   const verdicts = data.verdicts || [];
 
   if (!verdicts.length) {
@@ -771,6 +826,7 @@ function setService(id, text, connected) {
 }
 
 function render(snapshot) {
+  snapshot = expireAuthorization(snapshot);
   current = snapshot;
   rememberReadings(snapshot.readings);
 
@@ -783,15 +839,22 @@ function render(snapshot) {
     ) || sensorIds[0] || null;
   }
 
-  const evidenceMode = snapshot.evidence_mode === "audit_tail_reconciliation"
+  const evidenceMode = snapshot.evidence_mode === "guardian_passports"
+      ? "AUTHENTICATED GUARDIAN PASSPORTS · time-limited eligibility"
+      : snapshot.evidence_mode === "audit_tail_reconciliation"
       ? "VERIFIED EVIDENCE (audit reconciliation, not authorized trust)"
       : "GUARDIAN VERDICTS";
   $("env").textContent =
     `${human(snapshot.environment)} / ${evidenceMode}`;
+  document.body.dataset.mode = snapshot.environment;
 
   $("updated").textContent =
     `Operational snapshot · ${clock(snapshot.generated_at)} · Values from Brain database`;
 
+  const security = snapshot.security || {};
+  $("runtime-context").textContent = security.mock_controls_enabled ? "Configured Twin controls" : "Live sensor observations";
+  $("runtime-safety").textContent = `Actuator execution: ${security.actuator_execution_enabled ? "enabled" : "disabled"} · Automatic approval: ${security.automatic_approval_enabled ? "enabled" : "disabled"}`;
+  document.querySelectorAll(".control, [data-injection]").forEach(b => { b.disabled = role !== "brain" || !security.mock_controls_enabled; });
   renderMetrics(snapshot.metrics);
   renderCity(snapshot.city, snapshot.incidents);
   renderIncidents(snapshot);
@@ -806,13 +869,22 @@ async function refresh() {
   busy = true;
 
   try {
-    const [snapshot, providers] = await Promise.all([
-      request("/dashboard/api/snapshot"),
-      request("/dashboard/api/operations")
-    ]);
-
+    const snapshot = await request("/dashboard/api/snapshot");
     render(snapshot);
+  } catch (error) {
+    setService("brain-status", "Brain: unavailable", false);
+    showNotice(`Dashboard refresh failed. ${error.message}`);
+  } finally {
+    busy = false;
+  }
+}
 
+let providersBusy = false;
+async function refreshProviders() {
+  if (providersBusy) return;
+  providersBusy = true;
+  try {
+    const providers = await request("/dashboard/api/operations");
     setService(
       "brain-status",
       providers.brain?.processing ? "Brain: processing" : "Brain: idle",
@@ -838,12 +910,10 @@ async function refresh() {
       providers.guardian?.connected ? "Guardian: connected" : "Guardian: offline",
       Boolean(providers.guardian?.connected)
     );
-  } catch (error) {
-    setService("brain-status", "Brain: unavailable", false);
-    showNotice(`Dashboard refresh failed. ${error.message}`);
-  } finally {
-    busy = false;
-  }
+  } catch {
+    setService("guardian-status", "Guardian: status unavailable", false);
+    setService("twin-status", "Twin: status unavailable", false);
+  } finally { providersBusy = false; }
 }
 
 async function control(action, payload = {}) {
@@ -910,7 +980,8 @@ function boot() {
   if (timer) clearInterval(timer);
   refresh();
   connect();
-  timer = setInterval(refresh, 2000);
+  refreshProviders();
+  timer = setInterval(() => { refresh(); refreshProviders(); }, 1000);
 }
 
 async function restore() {
@@ -921,3 +992,36 @@ async function restore() {
 }
 
 restore();
+
+// Expire visible authorization even when network refreshes fail or are delayed.
+function expireAuthorization(snapshot, now = Date.now()) {
+  let changed = false;
+  const next = structuredClone(snapshot);
+  for (const sensor of Object.values(next.city?.sensors || {})) {
+    if (sensor.availability !== "available") continue;
+    const live = sensor.evidence.filter(e => !e.authorization_expires_at || Date.parse(e.authorization_expires_at) > now);
+    if (live.length !== sensor.evidence.length) {
+      // Do not continue displaying a fused value after any contributing grant expires.
+      sensor.evidence = [];
+      sensor.value = null;
+      sensor.statistics = {};
+      sensor.availability = "stale";
+      sensor.trust_status = "unverified";
+      sensor.last_observed_at = null;
+      changed = true;
+    }
+  }
+  if (!changed) return snapshot;
+  const eligible = new Set(Object.values(next.city.sensors).flatMap(s => s.evidence.map(e => e.event_id)));
+  next.metrics.trusted_readings = eligible.size;
+  next.metrics.eligible_sensors = Object.values(next.city.sensors).filter(s => s.availability === "available").length;
+  next.readings = next.readings.map(r => ({...r, currently_eligible: eligible.has(r.event_id), trust: eligible.has(r.event_id) ? "TRUSTED" : "EXPIRED"}));
+  return next;
+}
+
+setInterval(() => {
+  if (!current) return;
+  const next = expireAuthorization(current);
+  if (next !== current) render(next);
+}, 250);
+

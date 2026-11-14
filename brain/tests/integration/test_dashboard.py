@@ -1,6 +1,7 @@
 import asyncio
 import shutil
 import subprocess
+from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
@@ -9,10 +10,19 @@ import pytest
 from app.main import create_app
 from app.scenarios import SCENARIOS
 
+# ASYNC240: resolve the real device-allowlist path once at import time so the
+# async Twin-freshness test never performs blocking filesystem work.
+DEVICES_REAL_READONLY_PATH = (
+    Path(__file__).resolve().parents[2] / "config" / "devices.real-readonly.yaml"
+)
+DEVICES_REAL_READONLY = DEVICES_REAL_READONLY_PATH.exists()
+
 
 def test_dashboard_frontend_is_valid_and_reports_login_failures() -> None:
     script = Path("app/dashboard/static/app.js")
     source = script.read_text(encoding="utf-8")
+    assert "\u00c2\u00b7" not in source  # UTF-8 misread as Windows-1252
+    assert "\u00e2\u20ac" not in source
     assert "Invalid service API key." in source
     assert "Unable to authenticate." in source
     assert 'addEventListener("submit"' in source
@@ -348,6 +358,9 @@ async def test_provider_status_flattens_ngsi_timestamp_and_reports_fresh_twin(
     misreported as stale (the dict failed the isinstance(str) check)."""
     settings.worker_enabled = False
     settings.orion_base_url = "http://orion.test"
+    settings.snap4city_devices_file = (
+        str(DEVICES_REAL_READONLY_PATH) if DEVICES_REAL_READONLY else None
+    )
     app = create_app(settings)
 
     captured: dict = {}
@@ -355,16 +368,22 @@ async def test_provider_status_flattens_ngsi_timestamp_and_reports_fresh_twin(
     def handler(request: httpx.Request) -> httpx.Response:
         captured["url"] = str(request.url)
         # Exact hosted-broker shape: nested attribute dicts, including the
-        # timestamp that previously defeated the string check.
-        return httpx.Response(200, json={
-            "id": "us-b-bldg-01",
-            "type": "BuildingSensor",
-            "smokeLevel": {"type": "float", "value": 1.6},
-            "temperature": {"type": "float", "value": 22.3},
-            "timestamp": {
-                "type": "string", "value": "2026-11-13T19:08:17+00:00",
+        # timestamp that previously defeated the string check. The request
+        # must be attached so raise_for_status() works on the mock response.
+        return httpx.Response(
+            200,
+            request=request,
+            json={
+                "id": "us-b-bldg-01",
+                "type": "BuildingSensor",
+                "smokeLevel": {"type": "float", "value": 1.6},
+                "temperature": {"type": "float", "value": 22.3},
+                "timestamp": {
+                    "type": "string",
+                    "value": datetime.now(UTC).isoformat(),
+                },
             },
-        })
+        )
 
     real_async_client = httpx.AsyncClient
 
@@ -430,3 +449,45 @@ async def test_snapshot_raw_layer_exposes_latest_untrusted_readings(
         snapshot = (await client.get("/dashboard/api/snapshot")).json()
         # No observations stored: raw layer is present but empty.
         assert snapshot["raw_latest"] == {}
+
+
+def test_frontend_expires_authorization_and_accepts_later_trust() -> None:
+    script = r"""
+const fs = require('fs'), vm = require('vm'), assert = require('assert');
+const source = fs.readFileSync('app/dashboard/static/app.js', 'utf8');
+const expiry = source.slice(
+  source.indexOf('function expireAuthorization('), source.lastIndexOf('setInterval('));
+const history = source.slice(
+  source.indexOf('function rememberReadings('), source.indexOf('function renderCity('));
+const context = {structuredClone, Date, Set, Number,
+  sensorHistory:new Map(), seenEvents:new Set(), seenOrder:[]};
+vm.createContext(context); vm.runInContext(expiry + history, context);
+const snapshot = {
+  city:{sensors:{smoke:{availability:'available',trust_status:'trusted',value:12,
+    evidence:[{event_id:'e',authorization_expires_at:new Date(2000).toISOString()}]}}},
+  metrics:{trusted_readings:1,eligible_sensors:1},
+  readings:[{event_id:'e',currently_eligible:true,trust:'TRUSTED'}],
+  raw_latest:{smoke:{value:12}}
+};
+assert.strictEqual(context.expireAuthorization(snapshot,1999), snapshot);
+const expired = context.expireAuthorization(snapshot,2000);
+assert.strictEqual(expired.metrics.trusted_readings,0);
+assert.strictEqual(expired.metrics.eligible_sensors,0);
+assert.strictEqual(expired.city.sensors.smoke.value,null);
+assert.strictEqual(expired.city.sensors.smoke.availability,'stale');
+assert.strictEqual(expired.readings[0].currently_eligible,false);
+assert.strictEqual(expired.raw_latest.smoke.value,12);
+assert.strictEqual(snapshot.city.sensors.smoke.value,12);
+const reading={event_id:'late',sensor_id:'smoke',at:'2026-01-01',value:12,unit:'ppm',
+  trust:'RECEIVED',currently_eligible:false};
+context.rememberReadings([reading]);
+assert.strictEqual(context.seenEvents.has('late'),false);
+context.rememberReadings([{...reading,trust:'TRUSTED',currently_eligible:true}]);
+assert.strictEqual(context.sensorHistory.get('smoke').length,1);
+context.rememberReadings([{...reading,trust:'TRUSTED',currently_eligible:true}]);
+assert.strictEqual(context.sensorHistory.get('smoke').length,1);
+"""
+    result = subprocess.run(
+        [shutil.which("node"), "-e", script], capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 0, result.stderr

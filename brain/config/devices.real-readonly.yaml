@@ -13,6 +13,8 @@
 #   * congestionLevel ("%" is not a legal `traffic` unit in the registry)
 #   * fillLevel       ("fill" is not a registry measurement)
 #   * vehicleCount/occupancy (ambiguous Guardian traffic_camera channel)
+# Schema note: Guardian declares temperature unit "C" while the Brain
+# registry unit is "degC" (explicit equivalence mapping, never normalized).
 version: 1
 sensors:
   - entity_id: us-b-bldg-01

@@ -103,6 +103,8 @@ class ActuatorManager:
     def enqueue(
         self, session: Session, state: dict, decision_id: UUID, now: datetime
     ) -> list[dict]:
+        if self.city.eligibility.enabled and isinstance(self.adapter, OrionAdapter):
+            raise PermissionError("guardian_passport_execution_contract_incomplete")
         decision = session.get(DecisionRecord, decision_id)
         if decision is None:
             raise ValueError("decision_not_found")
@@ -174,6 +176,17 @@ class ActuatorManager:
         # must never invoke the outbound adapter.
         if not self.settings.actuator_execution_enabled:
             return 0
+        # Guardian's native passport has no signed assessment-time,
+        # revocation or live-quarantine contract. It may support supervised
+        # observation/decision inspection, but cannot open real dispatch.
+        if self.city.eligibility.enabled and isinstance(self.adapter, OrionAdapter):
+            return 0
+        # Task 7.3G-7B: async passport refresh BEFORE claiming — eligibility
+        # consumed by _claim's dispatch gate is re-derived at this instant.
+        if self.city.eligibility.enabled:
+            with self.database.transaction() as session:
+                candidates = self.city.recent_candidates(session, now)
+            await self.city.eligibility.refresh(candidates, now)
         claimed = self._claim(now)
         if claimed is None:
             return 0
@@ -204,6 +217,23 @@ class ActuatorManager:
             if row.status == "DELIVERED":
                 return row.id, command, "DELIVERED"
             state = self.city.rebuild(session, now)
+            # Task 7.3G-7: passport eligibility was re-derived for THIS claim
+            # instant by rebuild() itself (eligibility.refresh with now).
+            # When the passport mode is enabled, the decision's incident
+            # evidence must STILL be eligible right now; an approved decision
+            # whose underlying trust has expired cannot dispatch.
+            if (
+                self.city.eligibility.enabled
+                and not self._passport_evidence_current(session, command.decision_id, now)
+            ):
+                self.transition(
+                    session,
+                    row,
+                    "REJECTED",
+                    "passport_eligibility_not_current",
+                    now,
+                )
+                return None
             decision = session.get(DecisionRecord, command.decision_id)
             valid = (
                 decision is not None
@@ -225,28 +255,73 @@ class ActuatorManager:
             self.transition(session, row, "DISPATCHING", "delivery_started", now, attempts=1)
             return row.id, command, "PENDING"
 
+    def _passport_evidence_current(
+        self, session: Session, decision_id: UUID, now: datetime
+    ) -> bool:
+        """True when the decision's incident evidence is passport-eligible NOW.
+
+        Disabled mode returns True (feature inert, durable-verdict rules
+        govern). Enabled mode requires the decision's incident evidence
+        events to appear in the CURRENT snapshot (refreshed by tick() a
+        moment before _claim); snapshot age is itself bounded, so approval
+        age can never extend authorization.
+        """
+        eligibility = self.city.eligibility
+        if not eligibility.enabled:
+            return True
+        snapshot = eligibility.snapshot(now)
+        if (
+            now - snapshot.derived_at
+        ).total_seconds() > eligibility.max_snapshot_age_seconds:
+            return False
+        decision = session.get(DecisionRecord, decision_id)
+        if decision is None:
+            return False
+        incident = decision.payload.get("incident") or {}
+        for signal in incident.get("signals", []):
+            for item in signal.get("evidence", []):
+                raw = item.get("event_id") if isinstance(item, dict) else None
+                if raw is None:
+                    continue
+                try:
+                    if snapshot.eligible_at(UUID(raw), now):
+                        return True
+                except (ValueError, TypeError, AttributeError):
+                    continue
+        return False
+
     async def _reconcile_or_timeout(
         self, row_id: UUID, command: ActuatorCommand, now: datetime
     ) -> None:
         if isinstance(self.adapter, OrionAdapter):
             try:
-                state = await self.adapter.state(command.actuator_id)
-            except OrionError:
+                state = await self.adapter.read_entity(command.actuator_id)
+            except (OrionError, ValueError, TypeError):
                 state = None
-            if state and state.get("command_id") == str(command.command_id):
-                status = str(state.get("status", "")).lower()
-                if status in {"executed", "failed", "unknown"}:
-                    with self.database.transaction() as session:
-                        row = session.get(ActuatorCommandRecord, row_id)
+            if state:
+                with self.database.transaction() as session:
+                    row = session.get(ActuatorCommandRecord, row_id)
+                    delivered_at = datetime.fromisoformat(row.payload["delivered_at"])
+                    try:
+                        published = datetime.fromisoformat(str(state.get("timestamp", "")))
+                        fresh = published.tzinfo is not None and delivered_at < published <= now
+                    except (ValueError, TypeError):
+                        fresh = False
+                    expected = self.adapter.payload(command)
+                    matches = bool(expected) and all(
+                        state.get(name) == attribute["value"]
+                        for name, attribute in expected.items()
+                    )
+                    if fresh and matches:
                         self.transition(
                             session,
                             row,
-                            status.upper(),
-                            "orion_state_reconciliation",
+                            "EXECUTED",
+                            "twin_post_delivery_state_observed",
                             now,
-                            execution={"source": "orion_state", "state": state},
+                            execution={"source": "orion_entity", "state": state},
                         )
-                    return
+                        return
         with self.database.transaction() as session:
             row = session.get(ActuatorCommandRecord, row_id)
             delivered_at = datetime.fromisoformat(row.payload["delivered_at"])

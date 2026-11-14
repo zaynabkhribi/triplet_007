@@ -121,7 +121,12 @@ class OrionAdapter:
     async def deliver(self, command: ActuatorCommand) -> Delivery:
         entity = quote(self.settings.orion_entity_prefix + command.actuator_id, safe="")
         url = f"{str(self.settings.orion_base_url).rstrip('/')}/v2/entities/{entity}/attrs"
-        params: dict[str, str] = {}
+        params: dict[str, str] = {
+            # Twin INTERFACE-DETAILS.md §3: every write MUST carry the entity
+            # routing params elementid/type alongside the device keys.
+            "elementid": self.settings.orion_entity_prefix + command.actuator_id,
+            "type": self.entity_type_for(command.actuator_id),
+        }
         # Task 7.3G: the hosted Broker Filter authenticates WRITES with the
         # commanded device's own k1/k2 (Twin INTERFACE-DETAILS.md §3). Attach
         # ONLY that device's credentials from the git-ignored secrets file;
@@ -178,13 +183,13 @@ class OrionAdapter:
     async def read_entity(self, actuator_id: str) -> dict[str, Any] | None:
         """Read-only entity fetch for command acknowledgement (Task 7.3G).
 
-        The real Twin publishes each actuator's applied state every tick;
-        comparing the entity against the commanded values IS the
-        authoritative acknowledgement (Twin INTERFACE-DETAILS.md §5).
+        The worker requires a publication timestamp AFTER delivery and exact
+        target values. An immediate echo of our PATCH is not execution proof.
         Reads are unauthenticated per contract (no k1/k2 needed).
         """
         base = str(self.settings.orion_base_url).rstrip("/")
-        url = f"{base}/v2/entities/{actuator_id}"
+        identifier = self.settings.orion_entity_prefix + actuator_id
+        url = f"{base}/v2/entities/{quote(identifier, safe='')}"
         try:
             async with httpx.AsyncClient(
                 verify=self._verify(),
@@ -193,7 +198,11 @@ class OrionAdapter:
                 trust_env=False,
             ) as client:
                 response = await client.get(
-                    url, params={"elementid": actuator_id, "type": self.entity_type_for(actuator_id)}
+                    url,
+                    params={
+                        "elementid": identifier,
+                        "type": self.entity_type_for(actuator_id),
+                    },
                 )
         except httpx.HTTPError as exc:
             raise OrionError("orion_state_unavailable", True) from exc
@@ -201,7 +210,16 @@ class OrionAdapter:
             return None
         if response.status_code != 200:
             raise OrionError("orion_state_invalid_response", response.status_code >= 500)
-        entity = response.json()
+        try:
+            entity = response.json()
+        except ValueError as exc:
+            raise OrionError("orion_state_invalid_payload", False) from exc
+        if (
+            not isinstance(entity, dict)
+            or entity.get("id") != identifier
+            or entity.get("type") != self.entity_type_for(actuator_id)
+        ):
+            raise OrionError("orion_state_invalid_payload", False)
         return {
             k: (v.get("value") if isinstance(v, dict) and "value" in v else v)
             for k, v in entity.items()

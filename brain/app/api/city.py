@@ -15,7 +15,8 @@ router = APIRouter(
 
 @router.get("/state")
 async def state(request: Request) -> dict:
-    return await asyncio.to_thread(request.app.state.city_engine.snapshot)
+    city = request.app.state.city_engine
+    return await city.read_current(city.snapshot)
 
 
 @router.get("/zones")

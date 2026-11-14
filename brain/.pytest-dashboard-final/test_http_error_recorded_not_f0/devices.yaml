@@ -1,0 +1,9 @@
+
+version: 1
+sensors:
+  - entity_id: us-b-bldg-01
+    ngsi_type: BuildingSensor
+    attribute: smokeLevel
+    sensor_id: us-b-bldg-01:fire_smoke
+    measurement: smoke
+    unit: ppm

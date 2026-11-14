@@ -1,6 +1,6 @@
 import asyncio
 from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -46,9 +46,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     database = Database(app_settings)
     processor = EventProcessor(database, app_settings)
     actuator_manager = ActuatorManager(database, app_settings, processor.city)
-    coordinator = OperationalCoordinator(
-        database, app_settings, processor.city, actuator_manager
-    )
+    coordinator = OperationalCoordinator(database, app_settings, processor.city, actuator_manager)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -62,6 +60,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             app_settings.water_model_path,
         )
         task = asyncio.create_task(processor.run()) if app_settings.worker_enabled else None
+
+        async def refresh_passports() -> None:
+            while True:
+                try:
+                    await processor.city.read_current(processor.city.snapshot)
+                except asyncio.CancelledError:
+                    processor.city.eligibility.clear()
+                    raise
+                except Exception:
+                    processor.city.eligibility.clear()
+                await asyncio.sleep(1)
+
+        passport_task = (
+            asyncio.create_task(refresh_passports())
+            if app_settings.worker_enabled and app_settings.guardian_passport_enabled
+            else None
+        )
         actuator_task = (
             asyncio.create_task(actuator_manager.run())
             if app_settings.worker_enabled and app_settings.actuator_execution_enabled
@@ -102,6 +117,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         try:
             yield
         finally:
+            if passport_task is not None:
+                passport_task.cancel()
+                with suppress(asyncio.CancelledError):
+                    await passport_task
             processor.stop()
             actuator_manager.stop()
             coordinator.stop()

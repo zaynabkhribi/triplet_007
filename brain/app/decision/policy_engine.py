@@ -36,7 +36,7 @@ def candidates(
                 capability is None
                 or set(capability) != set(action.parameters)
                 or any(
-                    not capability[name].minimum <= value <= capability[name].maximum
+                    not capability[name].accepts(value)
                     for name, value in action.parameters.items()
                 )
             ):

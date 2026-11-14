@@ -98,7 +98,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             feedback_id=uuid5(NAMESPACE_URL, str(command.command_id)),
             command_id=command.command_id,
             correlation_id=command.correlation_id,
-            occurred_at=command.issued_at,
+            occurred_at=datetime.now(UTC),
             status=FeedbackStatus.EXECUTED,
             detail="simulated execution",
         )

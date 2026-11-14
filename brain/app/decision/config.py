@@ -33,6 +33,16 @@ class ParameterRange(StrictModel):
             raise ValueError("invalid capability range")
         return self
 
+    def accepts(self, value: float | str) -> bool:
+        return isinstance(value, (int, float)) and self.minimum <= value <= self.maximum
+
+
+class ParameterChoice(StrictModel):
+    values: list[str] = Field(min_length=1)
+
+    def accepts(self, value: float | str) -> bool:
+        return isinstance(value, str) and value in self.values
+
 
 class Availability(StrictModel):
     observed_at: AwareDatetime
@@ -56,7 +66,7 @@ class Resource(Availability):
 
 class Actuator(Availability):
     zone: str = Field(min_length=1)
-    capabilities: dict[str, dict[str, ParameterRange]] = Field(min_length=1)
+    capabilities: dict[str, dict[str, ParameterRange | ParameterChoice]] = Field(min_length=1)
 
 
 class ActionPolicy(StrictModel):
@@ -66,7 +76,7 @@ class ActionPolicy(StrictModel):
     minimum_severity: str
     action_type: str = Field(min_length=1, max_length=64)
     actuator_id: str = Field(min_length=1, max_length=128)
-    parameters: dict[str, float] = Field(default_factory=dict)
+    parameters: dict[str, float | str] = Field(default_factory=dict)
     resources: dict[str, Demand] = Field(default_factory=dict)
     conflicts: list[str] = Field(default_factory=list)
     cost: Amount

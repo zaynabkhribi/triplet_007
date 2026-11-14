@@ -1,0 +1,1 @@
+{"code": "ACCEPTED", "event": "reading.accepted", "evidence_digest": "sha256:1e1879631471feaa8d14cdf73210048b8c7ffb33524e7dce0ea528f457cf6a53", "observed_property": "temperature", "reading_id": "us-b-bldg-01:temperature:2099-01-01T00:00:00+00:00", "sensor_id": "us-b-bldg-01", "seq": 11, "ts": "2026-01-01T00:00:05Z", "value": 21.7, "zone": "ZONE-B"}

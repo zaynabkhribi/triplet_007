@@ -17,6 +17,7 @@ def eligible_incident(
     incident: dict,
     state: dict,
     now: datetime,
+    passport_eligibility=None,
 ) -> bool:
     if incident["status"] not in {"ACTIVE", "ESCALATED"} or not incident["evidence_eligible"]:
         return False
@@ -50,4 +51,5 @@ def eligible_incident(
             "sensor_mappings": registry["sensors"],
         },
         now,
+        passport_eligibility=passport_eligibility,
     )

@@ -8,7 +8,7 @@ from uuid import UUID
 
 import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from sqlalchemy import func, select, text
 
 from app.dashboard.security import (
@@ -52,6 +52,26 @@ async def dashboard() -> FileResponse:
             ),
         },
     )
+
+
+@router.get("/dashboard/mock-login", include_in_schema=False)
+async def mock_dashboard_login(request: Request) -> RedirectResponse:
+    """Create a local mock-only operator session without exposing its API key."""
+    settings = request.app.state.settings
+    client = request.client.host if request.client else ""
+    if settings.aegiscity_mode != "mock" or client not in {"127.0.0.1", "::1"}:
+        raise HTTPException(404, "not found")
+    token, _ = request.app.state.dashboard_sessions.create("brain")
+    response = RedirectResponse("/dashboard", status_code=303)
+    response.set_cookie(
+        COOKIE_NAME,
+        token,
+        httponly=True,
+        samesite="strict",
+        secure=False,
+        max_age=settings.dashboard_session_seconds,
+    )
+    return response
 
 
 @router.post("/dashboard/session", include_in_schema=False)
@@ -106,6 +126,23 @@ def snapshot(request: Request) -> dict:
     with request.app.state.database.transaction() as session:
         now = datetime.now(UTC)
         state = request.app.state.city_engine.rebuild(session, now)
+        passport_snapshot = request.app.state.city_engine.eligibility.snapshot(now)
+        for sensor in state["sensors"].values():
+            for evidence in sensor["evidence"]:
+                if evidence.get("trust_source") == "guardian_passport":
+                    expiry = passport_snapshot.expiry_by_event.get(UUID(evidence["event_id"]))
+                    evidence["authorization_expires_at"] = (
+                        expiry.isoformat() if expiry else now.isoformat()
+                    )
+        eligible_evidence = {
+            e["event_id"]: e
+            for sensor in state["sensors"].values()
+            if sensor["availability"] == "available"
+            for e in sensor["evidence"]
+        }
+        eligible_sensors = sum(
+            sensor["availability"] == "available" for sensor in state["sensors"].values()
+        )
         incidents = session.scalars(
             select(IncidentRecord)
             .order_by(
@@ -263,19 +300,30 @@ def snapshot(request: Request) -> dict:
         return {
             "generated_at": datetime.now(UTC).isoformat(),
             "health": {"database": "ready"},
-            "environment": "mock-development"
-            if request.app.state.settings.operational_demo_enabled
+            "environment": "mock-simulation"
+            if request.app.state.settings.aegiscity_mode == "mock"
             else request.app.state.settings.environment,
-            "evidence_mode": "audit_tail_reconciliation"
+            "evidence_mode": "guardian_passports"
+            if request.app.state.settings.guardian_passport_enabled
+            else "audit_tail_reconciliation"
             if getattr(request.app.state.settings, "guardian_evidence_source", "")
             == "audit_tail"
             else "guardian_verdicts",
             "audit_verified_matches": audit_verified,
             "audit_pending": pending_count,
+            "security": {
+                "mode": request.app.state.settings.aegiscity_mode,
+                "actuator_execution_enabled": request.app.state.settings.actuator_execution_enabled,
+                "automatic_approval_enabled": request.app.state.settings.operational_auto_approve,
+                "mock_controls_enabled": bool(request.app.state.settings.twin_base_url),
+            },
             "metrics": {
                 "incoming_events_per_second": round((incoming_recent or 0) / 10, 2),
                 "processed_observations": processed or 0,
-                "trusted_readings": trusted or 0,
+                "trusted_readings": len(eligible_evidence),
+                "durable_trusted_readings": trusted or 0,
+                "eligible_sensors": eligible_sensors,
+                "registered_sensors": len(state["sensors"]),
                 "rejected_readings": rejected or 0,
                 "active_incidents": sum(
                     row.payload["status"] in {"DETECTED", "ACTIVE", "ESCALATED"}
@@ -317,7 +365,13 @@ def snapshot(request: Request) -> dict:
                     "at": utc(event.occurred_at).isoformat(),
                     "value": event.payload["event"]["value"],
                     "unit": event.payload["event"]["unit"],
-                    "trust": lifecycle.state if lifecycle else "RECEIVED",
+                    "trust": "TRUSTED" if str(event.id) in eligible_evidence
+                    else lifecycle.state if lifecycle else "RECEIVED",
+                    "currently_eligible": str(event.id) in eligible_evidence,
+                    "trust_source": eligible_evidence.get(str(event.id), {}).get("trust_source"),
+                    "authorization_expires_at": eligible_evidence.get(str(event.id), {}).get(
+                        "authorization_expires_at"
+                    ),
                 }
                 for event, lifecycle in readings
             ],
@@ -362,6 +416,25 @@ async def provider_status(request: Request) -> dict:
         hosted Twin. The honest liveness signal is whether the monitored
         entity's timestamp is advancing (<= 120 s old).
         """
+        if settings.aegiscity_mode == "mock":
+            if not settings.twin_base_url:
+                return {"connected": False, "reason": "not_configured"}
+            try:
+                response = await client.get(
+                    str(settings.twin_base_url).rstrip("/") + "/operations",
+                    headers=headers,
+                )
+                response.raise_for_status()
+                status = response.json()
+                return {
+                    "connected": True,
+                    "publisher": "isolated-mock-twin",
+                    "last_publish_age_s": None,
+                    **status,
+                }
+            except (httpx.HTTPError, ValueError):
+                return {"connected": False, "reason": "mock_twin_unavailable"}
+
         base = settings.orion_base_url
         devices = getattr(settings, "snap4city_devices_file", None)
         if not base or not devices:
@@ -496,7 +569,7 @@ def timeline(
 @router.get("/dashboard/api/snapshot", include_in_schema=False)
 async def dashboard_snapshot(request: Request) -> dict:
     require_dashboard_role(request, "brain", "guardian", "twin")
-    return await asyncio.to_thread(snapshot, request)
+    return await request.app.state.city_engine.read_current(lambda: snapshot(request))
 
 
 @router.get("/dashboard/api/operations", include_in_schema=False)
@@ -528,6 +601,59 @@ async def control_operations(action: str, request: Request) -> dict:
     return response.json()
 
 
+async def _brain_operator_post(request: Request, path: str, payload: dict) -> dict:
+    """Use the existing authenticated Brain APIs for dashboard operator actions."""
+    settings = request.app.state.settings
+    if not settings.brain_base_url or not settings.brain_api_key:
+        raise HTTPException(503, "Brain operator API is not configured")
+    async with httpx.AsyncClient(timeout=10, trust_env=False) as client:
+        try:
+            response = await client.post(
+                str(settings.brain_base_url).rstrip("/") + path,
+                headers={"X-API-Key": settings.brain_api_key.get_secret_value()},
+                json=payload,
+            )
+        except httpx.HTTPError as exc:
+            raise HTTPException(502, "Brain operator API unavailable") from exc
+    if response.status_code >= 400:
+        detail = response.json().get("detail", "operator action rejected")
+        raise HTTPException(response.status_code, detail)
+    return response.json()
+
+
+@router.post("/dashboard/api/decisions/evaluate", include_in_schema=False)
+async def dashboard_evaluate(request: Request) -> dict:
+    session = require_dashboard_role(request, "brain")
+    require_csrf(request, session)
+    return await _brain_operator_post(request, "/v1/decisions/evaluate", {})
+
+
+@router.post("/dashboard/api/decisions/{decision_id}/approve", include_in_schema=False)
+async def dashboard_approve(decision_id: UUID, request: Request) -> dict:
+    session = require_dashboard_role(request, "brain")
+    require_csrf(request, session)
+    payload = await request.json()
+    reason = str(payload.get("reason", "")).strip()
+    if len(reason) < 8:
+        raise HTTPException(422, "Approval reason must contain at least 8 characters")
+    return await _brain_operator_post(
+        request,
+        "/v1/decisions/evaluate",
+        {"approval": {"decision_id": str(decision_id), "reason": reason}},
+    )
+
+
+@router.post("/dashboard/api/decisions/{decision_id}/execute", include_in_schema=False)
+async def dashboard_execute(decision_id: UUID, request: Request) -> dict:
+    session = require_dashboard_role(request, "brain")
+    require_csrf(request, session)
+    return await _brain_operator_post(
+        request,
+        "/v1/actions/execute",
+        {"decision_id": str(decision_id)},
+    )
+
+
 @router.get("/dashboard/api/timeline", include_in_schema=False)
 async def dashboard_timeline(request: Request, limit: int = Query(200, ge=1, le=1000)) -> list:
     require_dashboard_role(request, "brain", "guardian", "twin")
@@ -539,7 +665,9 @@ async def dashboard_events(request: Request) -> StreamingResponse:
     require_dashboard_role(request, "brain", "guardian", "twin")
 
     async def stream():
-        while True:
+        # Bound each stream so open dashboards cannot stall graceful shutdown.
+        # EventSource reconnects automatically and rechecks session authorization.
+        for _ in range(20):
             if await request.is_disconnected():
                 break
             items = await asyncio.to_thread(timeline, request, 100)

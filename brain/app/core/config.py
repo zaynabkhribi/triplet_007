@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     )
 
     app_name: str = "City Brain"
+    aegiscity_mode: Literal["real", "mock"] = "real"
     environment: str = "development"
     log_level: str = "INFO"
     database_url: str = "sqlite:///./city_brain.db"
@@ -34,6 +35,7 @@ class Settings(BaseSettings):
     worker_batch_size: int = Field(default=100, ge=1, le=1000)
     worker_max_attempts: int = Field(default=3, ge=1, le=20)
     worker_retry_seconds: float = Field(default=1, ge=0.01, le=60)
+    worker_idle_maintenance_seconds: float = Field(default=1.0, ge=0.1, le=60)
     worker_enabled: bool = True
     city_registry_file: str | None = None
     incident_rules_file: str | None = None
@@ -89,6 +91,16 @@ class Settings(BaseSettings):
     # Broker Filter (same schema as twin/secrets.json). Required for real
     # actuator writes; never committed, never logged, never echoed.
     orion_actuator_secrets_file: str | None = None
+    # Task 7.3G-6: Guardian-native SHORT-LIVED trust eligibility. Disabled by
+    # default; when enabled, eligibility comes from Guardian's HMAC-signed
+    # Evidence Passports (POST /v1/passport) and is re-derived fresh before
+    # every externally visible action. Restricted to dev/test environments.
+    guardian_passport_enabled: bool = False
+    # Verification-only HMAC key matching Guardian's auth.key_env_var secret.
+    # REQUIRED when guardian_passport_enabled is true; the Guardian development
+    # default key is refused. Never committed, never logged.
+    guardian_passport_hmac_key: SecretStr | None = None
+    guardian_passport_max_evidence_age_seconds: float = Field(default=30, gt=0, le=300)
     mock_twin_allowed_actions: str = "test"
     mock_twin_failure_mode: Literal["none", "fail_once", "always"] = "none"
     mock_twin_delay_seconds: float = Field(default=0, ge=0, le=60)
@@ -138,6 +150,10 @@ class Settings(BaseSettings):
                 )
             if self.operational_demo_enabled or self.operational_auto_approve:
                 raise ValueError("operational demo automation is forbidden in production")
+            if self.guardian_passport_enabled:
+                raise ValueError(
+                    "guardian_passport_enabled is forbidden in production"
+                )
             if len(values) != 3:
                 raise ValueError("production API keys must be configured")
             urls = [self.brain_base_url, self.twin_base_url, self.guardian_base_url]
@@ -147,6 +163,25 @@ class Settings(BaseSettings):
                 self.actuator_transport != "orion" or self.orion_base_url.scheme != "https"
             ):
                 raise ValueError("production actuator execution requires Orion HTTPS")
+        if self.guardian_passport_enabled and self.guardian_passport_hmac_key is None:
+            raise ValueError(
+                "guardian_passport_enabled requires guardian_passport_hmac_key"
+            )
+        if self.aegiscity_mode == "mock":
+            urls = [self.brain_base_url, self.twin_base_url, self.guardian_base_url]
+            if any(
+                url is None or url.host not in {"127.0.0.1", "localhost", "::1"}
+                for url in urls
+            ):
+                raise ValueError("mock mode requires loopback-only service URLs")
+            if self.snap4city_ingest_enabled or self.guardian_passport_enabled:
+                raise ValueError("mock mode cannot enable real ingestion or Passport trust")
+            if self.actuator_transport != "mock_twin":
+                raise ValueError("mock mode requires the isolated mock_twin transport")
+            if self.operational_auto_approve:
+                raise ValueError("mock mode requires explicit human decision approval")
+            if "real_integration" in self.database_url.lower():
+                raise ValueError("mock mode cannot use the real integration database")
         return self
 
 

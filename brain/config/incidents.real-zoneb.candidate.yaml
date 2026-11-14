@@ -1,0 +1,41 @@
+# Task 7.3G-6 — INACTIVE CANDIDATE: real Zone B fire incident rule.
+#
+# NOT loaded by the running Brain (INCIDENT_RULES_FILE still points at
+# incidents.real-readonly.yaml with rules: []). This file exists so a
+# separately-approved change can later point INCIDENT_RULES_FILE here.
+#
+# Schema-validated against app/intelligence/incident_rules.py::IncidentRule:
+#   * incident_type "smoke_alert" REQUIRES measurement "smoke"
+#     (validator: incident type and measurement mismatch).
+#   * measurement must be a registry measurement with compatible units —
+#     city.real-readonly.yaml registers smoke/ppm for us-b-bldg-01.
+#   * severity thresholds must increase in anomaly magnitude.
+#
+# Threshold source: the Twin's OWN documented fire model (twin/src/schema.py):
+#   smoke_warning = 10 ppm, smoke_critical = 100 ppm; the fire ramp produces
+#   20 ppm per tick. Normal mode idles at ~2±1 ppm, so normal readings can
+#   never cross the warning threshold. These ARE compatible with Brain's
+#   "above"-mode rule semantics, so they are used verbatim.
+version: 1.0.0
+simulation_only: false
+rules:
+  - id: real-zone-b-smoke-alert
+    incident_type: smoke_alert
+    source: observations
+    measurement: smoke
+    unit: ppm
+    mode: above
+    thresholds:
+      low: 10
+      medium: 30
+      high: 100
+      critical: 200
+    zones: [B]
+    window_seconds: 300
+    persistence_seconds: 10
+    min_samples: 2
+    min_sensors: 1
+    correlation_seconds: 30
+    max_gap_seconds: 60
+    recovery_seconds: 30
+    recovery_samples: 2
